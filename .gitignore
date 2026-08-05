@@ -1,0 +1,24 @@
+# RTL to GDSII Automation Gitignore
+
+# OpenLane environment and intermediate runs (Massive size)
+OpenLane/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local config or secrets
+.env
+secret/
+
+# Temporary files
+*.swp
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Large Manufacturing Files (Exceeds GitHub 100MB Limit)
+*.gds
+*.mag

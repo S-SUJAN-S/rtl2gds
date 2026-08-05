@@ -1,0 +1,10 @@
+{
+    "DESIGN_NAME": "full_adder",
+    "VERILOG_FILES": "dir::src/full_adder.v",
+    "CLOCK_PORT": null,
+    "RUN_CTS": 0,
+    "FP_SIZING": "absolute",
+    "DIE_AREA": "0 0 50 50",
+    "PL_TARGET_DENSITY": 0.5,
+    "GRT_REPAIR_ANTENNAS": 1
+}

@@ -1,0 +1,26 @@
+{
+    "design_name": "sample_counter",
+    "verilog_files": [
+        "examples/sample_counter.v"
+    ],
+    "pdk": "sky130A",
+    "clock_period_ns": 10.0,
+    "clock_port": "clk",
+    "core_utilization": 65,
+    "aspect_ratio": 1.0,
+    "core_space_um": 10.0,
+    "placement_density": 0.60,
+    "cts_buffers": [
+        "sky130_fd_sc_hd__clkbuf_1",
+        "sky130_fd_sc_hd__clkbuf_2",
+        "sky130_fd_sc_hd__clkbuf_4"
+    ],
+    "llm_agent": {
+        "model_name": "gemini-3.6-flash",
+        "max_repair_iterations": 5,
+        "target_setup_slack_ns": 0.0,
+        "target_hold_slack_ns": 0.0,
+        "auto_eco_gate_sizing": true,
+        "auto_floorplan_scaling": true
+    }
+}

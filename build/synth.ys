@@ -1,0 +1,7 @@
+
+        read_verilog examples/sample_counter.v
+        synth -top sample_counter
+        opt -purge
+        write_verilog -noattr build/sample_counter_synth.v
+        write_json build/sample_counter_netlist.json
+        

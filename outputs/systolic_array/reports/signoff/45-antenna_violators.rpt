@@ -1,0 +1,14 @@
+Partial/Required:  4.28, Required:    400.0, Partial:  1712.33, Net: _30655_, Pin: _69428_/A1, Layer: met1
+Partial/Required:  2.96, Required:    400.0, Partial:   1186.0, Net: net287, Pin: _68302_/A1, Layer: met1
+Partial/Required:  1.35, Required:    400.0, Partial:   541.78, Net: net2377, Pin: _71829_/D, Layer: met1
+Partial/Required:  1.22, Required:    400.0, Partial:   489.78, Net: _30409_, Pin: _68654_/S, Layer: met1
+Partial/Required:  1.16, Required:    400.0, Partial:   463.67, Net: _30096_, Pin: _68175_/A0, Layer: met1
+Partial/Required:  1.15, Required:    400.0, Partial:   460.44, Net: deskew_out\[20\]\[31\], Pin: hold1278/A, Layer: met1
+Partial/Required:  1.14, Required:    400.0, Partial:   455.89, Net: _01514_, Pin: _69848_/D, Layer: met1
+Partial/Required:  1.09, Required:    400.0, Partial:   436.78, Net: deskew_out\[42\]\[5\], Pin: _68540_/A0, Layer: met1
+Partial/Required:  1.08, Required:    400.0, Partial:   431.25, Net: net2453, Pin: _71364_/D, Layer: met1
+Partial/Required:  1.07, Required:    400.0, Partial:   429.33, Net: _01012_, Pin: _73596_/D, Layer: met1
+Partial/Required:  1.02, Required:    400.0, Partial:   408.28, Net: _16720_, Pin: _53852_/A, Layer: met1
+Partial/Required:  1.02, Required:    400.0, Partial:   408.28, Net: _16720_, Pin: _53848_/A, Layer: met1
+Partial/Required:  1.01, Required:    400.0, Partial:   404.22, Net: deskew_out\[9\]\[26\], Pin: hold1485/A, Layer: met1
+Partial/Required:  1.01, Required:    400.0, Partial:   402.44, Net: _30697_, Pin: _69326_/A0, Layer: met1

@@ -1,0 +1,13 @@
+{
+    "DESIGN_NAME": "systolic_mm_accel",
+    "VERILOG_FILES": "dir::src/systolic_mm_accel.v",
+    "CLOCK_PORT": "clk",
+    "CLOCK_PERIOD": 20.0,
+    "RUN_CTS": true,
+    "FP_SIZING": "relative",
+    "FP_CORE_UTIL": 50,
+    "DESIGN_IS_CORE": 0,
+    "FP_PDN_CORE_RING": 0,
+    "RT_MAX_LAYER": "met4",
+    "DIODE_INSERTION_STRATEGY": 4
+}

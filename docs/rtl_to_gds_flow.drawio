@@ -1,0 +1,256 @@
+<?xml version="1.0" ?>
+<mxfile host="Electron" agent="Antigravity" version="21.6.8" type="device">
+  <diagram id="rtl_to_gds_flow" name="RTL-to-GDSII Flow &amp; LLM Agent">
+    <mxGraphModel dx="1400" dy="1400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="bg_rect" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0F172A;strokeColor=none;" parent="1" vertex="1">
+          <mxGeometry x="0" y="0" width="1400" height="1350" as="geometry"/>
+        </mxCell>
+        <mxCell id="title" value="&lt;b&gt;RTL-TO-GDSII ASIC FLOW &amp; LLM AGENT ARCHITECTURE&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=22;fontStyle=1;fontColor=#F8FAFC;" parent="1" vertex="1">
+          <mxGeometry x="50" y="20" width="1300" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase_0" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#3B82F6;strokeWidth=2;arcSize=8;collapsible=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="80" width="920" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_0" value="  PHASE 0: FRONT-END DESIGN &amp; VERIFICATION" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#60A5FA;" parent="1" vertex="1">
+          <mxGeometry x="60" y="90" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_01" value="&lt;b&gt;[01]&lt;/b&gt;&lt;br/&gt;RTL Coding &amp; Spec&#10;(SystemVerilog / Pyverilog)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E3A8A;strokeColor=#3B82F6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="130" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_02" value="&lt;b&gt;[02]&lt;/b&gt;&lt;br/&gt;Static Linting&#10;(Verilator --lint-only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E3A8A;strokeColor=#3B82F6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="130" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_100" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_01" target="step_02" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_03" value="&lt;b&gt;[03]&lt;/b&gt;&lt;br/&gt;Functional Simulation&#10;(Cocotb + Icarus)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E3A8A;strokeColor=#3B82F6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="130" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_101" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_02" target="step_03" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_04" value="&lt;b&gt;[04]&lt;/b&gt;&lt;br/&gt;CDC &amp; RDC Analysis&#10;(Pyverilog AST)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E3A8A;strokeColor=#3B82F6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="130" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_102" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#3B82F6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_03" target="step_04" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase_1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#8B5CF6;strokeWidth=2;arcSize=8;collapsible=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="255" width="920" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_1" value="  PHASE 1: LOGIC SYNTHESIS &amp; DFT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#C084FC;" parent="1" vertex="1">
+          <mxGeometry x="60" y="265" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_05" value="&lt;b&gt;[05]&lt;/b&gt;&lt;br/&gt;RTL Elaboration&#10;(Yosys AST JSON)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4C1D95;strokeColor=#8B5CF6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="305" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_103" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_04" target="step_05" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_06" value="&lt;b&gt;[06]&lt;/b&gt;&lt;br/&gt;Logic Optimization&#10;(Yosys opt / fsm)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4C1D95;strokeColor=#8B5CF6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="305" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_104" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_05" target="step_06" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_07" value="&lt;b&gt;[07]&lt;/b&gt;&lt;br/&gt;Technology Mapping&#10;(Yosys + ABC .lib)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4C1D95;strokeColor=#8B5CF6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="305" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_105" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_06" target="step_07" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_08" value="&lt;b&gt;[08]&lt;/b&gt;&lt;br/&gt;DFT Scan &amp; ATPG&#10;(Fault Python API)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4C1D95;strokeColor=#8B5CF6;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="305" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_106" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#8B5CF6;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_07" target="step_08" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase_2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#EC4899;strokeWidth=2;arcSize=8;collapsible=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="430" width="920" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_2" value="  PHASE 2: FORMAL VERIFICATION &amp; FLOORPLANNING" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#F472B6;" parent="1" vertex="1">
+          <mxGeometry x="60" y="440" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_09" value="&lt;b&gt;[09]&lt;/b&gt;&lt;br/&gt;Formal LEC Proof&#10;(SymbiYosys / EQY)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#EC4899;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="480" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_107" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EC4899;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_08" target="step_09" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_10" value="&lt;b&gt;[10]&lt;/b&gt;&lt;br/&gt;Die &amp; Core Sizing&#10;(PyOpenROAD)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#EC4899;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="480" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_108" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EC4899;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_09" target="step_10" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_11" value="&lt;b&gt;[11]&lt;/b&gt;&lt;br/&gt;IO Pin Placement&#10;(ioPlacer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#EC4899;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="480" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_109" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EC4899;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_10" target="step_11" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_12" value="&lt;b&gt;[12]&lt;/b&gt;&lt;br/&gt;Macro Placement&#10;(mpl2 Halos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#EC4899;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="480" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_110" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EC4899;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_11" target="step_12" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_13" value="&lt;b&gt;[13]&lt;/b&gt;&lt;br/&gt;Power Grid PGN&#10;(pdn Mesh)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#831843;strokeColor=#EC4899;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="570" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_111" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EC4899;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_12" target="step_13" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase_3" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#10B981;strokeWidth=2;arcSize=8;collapsible=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="695" width="920" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_3" value="  PHASE 3: PLACEMENT, CTS &amp; ROUTING" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#34D399;" parent="1" vertex="1">
+          <mxGeometry x="60" y="705" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_14" value="&lt;b&gt;[14]&lt;/b&gt;&lt;br/&gt;Tap &amp; Endcaps&#10;(tapcell)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="745" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_112" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_13" target="step_14" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_15" value="&lt;b&gt;[15]&lt;/b&gt;&lt;br/&gt;Global Placement&#10;(ePlace / gpl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="745" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_113" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_14" target="step_15" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_16" value="&lt;b&gt;[16]&lt;/b&gt;&lt;br/&gt;Legalization&#10;(dpl)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="745" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_114" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_15" target="step_16" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_17" value="&lt;b&gt;[17]&lt;/b&gt;&lt;br/&gt;Clock Tree CTS&#10;(TritonCTS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="745" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_115" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_16" target="step_17" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_18" value="&lt;b&gt;[18]&lt;/b&gt;&lt;br/&gt;Hold Repair&#10;(repair_hold)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="835" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_116" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_17" target="step_18" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_19" value="&lt;b&gt;[19]&lt;/b&gt;&lt;br/&gt;Global Routing&#10;(fastroute)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="835" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_117" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_18" target="step_19" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_20" value="&lt;b&gt;[20]&lt;/b&gt;&lt;br/&gt;Detailed Routing&#10;(TritonRoute)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064E3B;strokeColor=#10B981;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="835" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_118" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_19" target="step_20" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="phase_4" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E293B;strokeColor=#F59E0B;strokeWidth=2;arcSize=8;collapsible=0;" parent="1" vertex="1">
+          <mxGeometry x="50" y="960" width="920" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="lbl_4" value="  PHASE 4: PARASITICS, STA, PHYSICAL VERIFICATION &amp; TAPEOUT" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#FBBF24;" parent="1" vertex="1">
+          <mxGeometry x="60" y="970" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_21" value="&lt;b&gt;[21]&lt;/b&gt;&lt;br/&gt;Antenna Diodes&#10;(antenna_checker)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="1010" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_119" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_20" target="step_21" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_22" value="&lt;b&gt;[22]&lt;/b&gt;&lt;br/&gt;RC Extraction&#10;(OpenRCX SPEF)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="1010" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_120" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_21" target="step_22" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_23" value="&lt;b&gt;[23]&lt;/b&gt;&lt;br/&gt;Signoff STA&#10;(OpenSTA Python)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="1010" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_121" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_22" target="step_23" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_24" value="&lt;b&gt;[24]&lt;/b&gt;&lt;br/&gt;IR Drop Analysis&#10;(psm Engine)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="1010" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_122" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_23" target="step_24" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_25" value="&lt;b&gt;[25]&lt;/b&gt;&lt;br/&gt;LVS Verification&#10;(Netgen / Magic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="75" y="1100" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_123" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="step_24" target="step_25" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_26" value="&lt;b&gt;[26]&lt;/b&gt;&lt;br/&gt;DRC Verification&#10;(KLayout / Magic)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="290" y="1100" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_124" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_25" target="step_26" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_27" value="&lt;b&gt;[27]&lt;/b&gt;&lt;br/&gt;Metal Dummy Fill&#10;(KLayout Fill)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#78350F;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="505" y="1100" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_125" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_26" target="step_27" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="step_28" value="&lt;b&gt;[28]&lt;/b&gt;&lt;br/&gt;GDSII Tapeout&#10;(KLayout Stream)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#B45309;strokeColor=#F59E0B;fontColor=#FFFFFF;fontSize=11;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="720" y="1100" width="195" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_126" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_27" target="step_28" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_agent_box" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1E1B4B;strokeColor=#818CF8;strokeWidth=3;arcSize=6;" parent="1" vertex="1">
+          <mxGeometry x="1000" y="80" width="350" height="1180" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_hdr" value="&lt;b&gt;AUTONOMOUS LLM AGENT&lt;/b&gt;&lt;br/&gt;Closed-Loop Control Engine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#A5B4FC;" parent="1" vertex="1">
+          <mxGeometry x="1010" y="100" width="330" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_card_160" value="&lt;b&gt;Agent Orchestrator&lt;/b&gt;&lt;br/&gt;&lt;font color='#C7D2FE' size='1'&gt;Parses JSON AST, OpenSTA reports &amp; KLayout DRC logs via OpenLane 2 Python API&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#312E81;strokeColor=#6366F1;fontColor=#FFFFFF;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1025" y="180" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_card_340" value="&lt;b&gt;Timing ECO Engine&lt;/b&gt;&lt;br/&gt;&lt;font color='#C7D2FE' size='1'&gt;Detects setup/hold slack &lt; 0. Dynamically invokes PyOpenROAD `size_cell` &amp; `repair_timing`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#312E81;strokeColor=#6366F1;fontColor=#FFFFFF;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1025" y="360" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_card_520" value="&lt;b&gt;DRC Repair Engine&lt;/b&gt;&lt;br/&gt;&lt;font color='#C7D2FE' size='1'&gt;Reads DRC error coordinates from TritonRoute. Triggers localized rip-up &amp; re-route&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#312E81;strokeColor=#6366F1;fontColor=#FFFFFF;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1025" y="540" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="llm_card_700" value="&lt;b&gt;AST &amp; Code Refactor&lt;/b&gt;&lt;br/&gt;&lt;font color='#C7D2FE' size='1'&gt;Analyzes Verilator warnings &amp; SBY counter-examples to auto-patch Verilog source&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#312E81;strokeColor=#6366F1;fontColor=#FFFFFF;fontSize=12;align=center;verticalAlign=middle;strokeWidth=1.5;" parent="1" vertex="1">
+          <mxGeometry x="1025" y="720" width="300" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="edge_sta_llm" value="Slack &amp;lt; 0 ns" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F43F5E;strokeWidth=2.5;dashed=1;endArrow=classic;fontColor=#F8FAFC;labelBackgroundColor=none;verticalAlign=bottom;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_23" target="llm_card_340" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="602.5" y="1220"/>
+              <mxPoint x="980" y="1220"/>
+              <mxPoint x="980" y="420"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_drc_llm" value="DRC Violations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F59E0B;strokeWidth=2.5;dashed=1;endArrow=classic;fontColor=#F8FAFC;labelBackgroundColor=none;verticalAlign=bottom;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="step_26" target="llm_card_520" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="387.5" y="1240"/>
+              <mxPoint x="960" y="1240"/>
+              <mxPoint x="960" y="600"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_eco_fix" value="PyOpenROAD ECO Sizing" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#10B981;strokeWidth=2.5;dashed=1;endArrow=classic;fontColor=#F8FAFC;labelBackgroundColor=none;verticalAlign=bottom;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="llm_card_340" target="step_17" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="420"/>
+              <mxPoint x="940" y="780"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

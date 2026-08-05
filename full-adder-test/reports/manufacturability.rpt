@@ -1,0 +1,19 @@
+Design Name: full_adder
+Run Directory: /openlane/designs/full_adder/runs/RUN_2026.08.05_06.40.00
+----------------------------------------
+
+Magic DRC Summary:
+Source: /openlane/designs/full_adder/runs/RUN_2026.08.05_06.40.00/reports/signoff/drc.rpt
+Total Magic DRC violations is 0
+----------------------------------------
+
+LVS Summary:
+Source: /openlane/designs/full_adder/runs/RUN_2026.08.05_06.40.00/logs/signoff/37-full_adder.lef.lvs.log
+Number of nets: 15                         |Number of nets: 15                         
+Design is LVS clean.
+----------------------------------------
+
+Antenna Summary:
+Source: /openlane/designs/full_adder/runs/RUN_2026.08.05_06.40.00/logs/signoff/39-arc.log
+Pin violations: 0
+Net violations: 0
