@@ -163,7 +163,7 @@ def check_eda_environment() -> bool:
         if ver:
             ok(f"{name:<12}: {ver}")
         else:
-            if name in ["verilator", "iverilog", "vvp", "yosys"]:
+            if name in ["iverilog", "vvp", "yosys"]:
                 err(f"{name:<12}: NOT FOUND in WSL")
                 all_ok = False
             else:
