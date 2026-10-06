@@ -178,8 +178,7 @@ After each run, inspection artifacts are exported directly to `outputs/pipeline_
 ## 👨‍💻 Author & Attribution
 
 Developed by **Sujan S**  
-Department of Electronics & Communication Engineering (ECE)  
-RV College of Engineering (RVCE), Bengaluru  
+Independent Hardware AI & Autonomous EDA Researcher  
 - **GitHub:** [@S-SUJAN-S](https://github.com/S-SUJAN-S)  
 - **Portfolio Repository:** [rtl2gds](https://github.com/S-SUJAN-S/rtl2gds)
 
