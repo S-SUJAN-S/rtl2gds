@@ -87,11 +87,11 @@ PROVIDER_CONFIGS = {
         "env_prefix": "GROQ_API_KEY",
         "signup_url": "https://console.groq.com/keys",
         "models": {
-            "rtl": "qwen-2.5-coder-32b",
-            "complex": "llama-3.3-70b-versatile",
-            "sta": "llama-3.3-70b-versatile",
-            "general": "llama-3.3-70b-versatile",
-            "reasoning": "deepseek-r1-distill-llama-70b",
+            "rtl": "qwen/qwen3.8-27b",
+            "complex": "qwen/qwen3.8-27b",
+            "sta": "qwen/qwen3.8-27b",
+            "general": "qwen/qwen3.8-27b",
+            "reasoning": "qwen/qwen3.8-27b",
         },
     },
     "deepseek": {
