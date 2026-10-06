@@ -33,10 +33,11 @@ class LintECOAgent(BaseAgent):
         "  3. Return ONLY the raw Verilog code. No markdown, no explanations.\n"
         "  4. The LAST LINE must be exactly: endmodule\n"
         "  5. Do NOT change port names or module names.\n"
-        "  6. Fix 'Procedural assignment to wire' (PROCASSWIRE) by changing the signal declaration from 'wire' to 'reg'.\n"
+        "  6. Fix 'Procedural assignment to wire' (PROCASSWIRE) by changing the port declaration in the module header to 'output reg ...' (e.g. change 'output [3:0] result' to 'output reg [3:0] result'). NEVER add duplicate declarations inside the module body.\n"
         "  7. Fix latch warnings by adding default assignments at the top of case/if blocks.\n"
         "  8. Fix width mismatch warnings by explicit bit-selection or zero-extension.\n"
-        "  9. Fix undriven nets by assigning them to 0 or removing unused outputs."
+        "  9. Fix undriven nets by assigning them to 0 or removing unused outputs.\n"
+        "  10. NEVER declare a signal or port twice (no duplicate signal declarations)."
     )
 
     def __init__(self):
@@ -104,9 +105,14 @@ Output the ENTIRE corrected Verilog file. Last line must be: endmodule"""
             result = self.query(prompt, task_type="rtl", system=self.SYSTEM, verbose=verbose)
             fixed = self.extract_verilog(result.get("response", ""))
 
-            if not fixed or len(fixed) < 20:
+            if not fixed or len(fixed) < 20 or "[HTTP Error" in fixed or "[Request Error" in fixed or "[ModelRouter Error" in fixed:
                 if verbose:
-                    print(f"  [LintECO] [WARN] LLM returned empty/tiny response. Skipping.")
+                    print(f"  [LintECO] [WARN] LLM returned error or empty response. Skipping.")
+                continue
+
+            if "module " not in fixed or "endmodule" not in fixed:
+                if verbose:
+                    print(f"  [LintECO] [WARN] LLM patch missing module definition. Skipping.")
                 continue
 
             if not fixed.rstrip().endswith("endmodule"):

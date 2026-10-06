@@ -28,7 +28,8 @@ SYSTEM_BASE = (
     "  3. Assign default values at the start of every case/if to prevent unintended latches.\n"
     "  4. Every module must start with 'module <name>' and end with 'endmodule'.\n"
     "  5. Return ONLY the raw Verilog code - no markdown, no commentary, no explanations.\n"
-    "  6. Do NOT truncate. The LAST line must be exactly 'endmodule'."
+    "  6. Do NOT truncate. The LAST line must be exactly 'endmodule'.\n"
+    "  7. CRITICAL ANSI PORT DECLARATION RULE: If an output port is updated inside an always block, declare it directly in the module port list as 'output reg ...' (e.g. 'output reg [3:0] result', 'output reg carry_out'). NEVER declare it as 'output' and then assign to it procedurally, and NEVER add duplicate signal declarations inside the module body."
 )
 
 SYSTEM_AXI = SYSTEM_BASE + (
@@ -46,27 +47,36 @@ SYSTEM_UART = SYSTEM_BASE + (
     "  - Bit period = CLK_FREQ / BAUD_RATE clock cycles.\n"
     "  - Frame: 1 start bit (0), 8 data bits LSB-first, 1 stop bit (1).\n"
     "  - Use a baud rate counter (bit_cnt) that counts to CLK_FREQ/BAUD_RATE-1.\n"
-    "  - TX line idles HIGH (1). Start bit drives TX LOW (0)."
+    "  - TX line idles HIGH (1). Start bit drives TX LOW (0).\n"
+    "  - Declare 'output reg tx' and 'output reg tx_ready' in the port list."
 )
 
 SYSTEM_FIFO = SYSTEM_BASE + (
     "\n\nFIFO Design Rules:\n"
     "  - Use a circular buffer with wr_ptr and rd_ptr registers.\n"
+    "  - Declare 'output reg [WIDTH-1:0] data_out', 'output full', 'output empty'.\n"
     "  - assign full  = ((wr_ptr + 1'b1) % DEPTH) == rd_ptr;\n"
     "  - assign empty = (wr_ptr == rd_ptr);\n"
     "  - Do NOT write when full, do NOT read when empty.\n"
-    "  - Explicitly declare output full and output empty wires and assign them continuous logic."
+    "  - Do NOT declare full or empty as reg or assign to them inside always blocks."
 )
 
 SYSTEM_ALU = SYSTEM_BASE + (
     "\n\nALU Design Rules:\n"
     "  - Purely combinational logic using always @(*) or continuous assign.\n"
-    "  - Declare 'output reg [WIDTH-1:0] result' and 'output reg carry_out' if assigned inside always @(*).\n"
-    "  - Initialize default values at top of always @(*): result = 0; carry_out = 0;\n"
-    "  - Example ADD: {carry_out, result} = a + b;\n"
-    "  - Example SUB: {carry_out, result} = {1'b0, a} - {1'b0, b};\n"
-    "  - assign zero = (result == 0);\n"
-    "  - Never assign to a signal declared as 'wire' inside an always block."
+    "  - Declare 'output reg [3:0] result' and 'output reg carry_out' directly in the module port list header.\n"
+    "  - Initialize default values at top of always @(*): result = 4'b0; carry_out = 1'b0;\n"
+    "  - Opcodes:\n"
+    "      0: {carry_out, result} = a + b;\n"
+    "      1: {carry_out, result} = {1'b0, a} - {1'b0, b};\n"
+    "      2: begin result = a & b; carry_out = 0; end\n"
+    "      3: begin result = a | b; carry_out = 0; end\n"
+    "      4: begin result = a ^ b; carry_out = 0; end\n"
+    "      5: begin result = ~a; carry_out = 0; end\n"
+    "      6: begin result = a << 1; carry_out = a[3]; end\n"
+    "      7: begin result = a >> 1; carry_out = a[0]; end\n"
+    "  - assign zero = (result == 4'b0);\n"
+    "  - Do NOT redeclare result or carry_out inside the module body."
 )
 
 PROTOCOL_SYSTEMS = {

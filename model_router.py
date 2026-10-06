@@ -379,23 +379,28 @@ class ModelRouter:
                 format=format,
             )
 
-            if isinstance(result, dict) and "[HTTP Error 429" in result.get("response", ""):
+            resp_str = result.get("response", "") if isinstance(result, dict) else ""
+            is_err = isinstance(result, dict) and (
+                "[HTTP Error" in resp_str or "[Request Error" in resp_str or "[ModelRouter Error]" in resp_str
+            )
+            if is_err:
                 last_error = result
+                err_summary = resp_str.split("]")[0] + "]" if "]" in resp_str else "error"
                 if num_keys > 1:
-                    print(f"[*] [ModelRouter] Account key #{active_idx + 1} for '{provider}' hit rate limit (429). Rotating to next account key...")
+                    print(f"[*] [ModelRouter] Account key #{active_idx + 1} for '{provider}' failed ({err_summary}). Rotating to next account key...")
                     continue
                 else:
                     break
 
             return result
 
-        fallback_providers = [p for p in ["cerebras", "groq", "deepseek", "gemini", "openrouter"] if p != provider]
+        fallback_providers = [p for p in ["groq", "openrouter", "gemini", "cerebras", "deepseek"] if p != provider]
         for fb_prov in fallback_providers:
             fb_keys = self._get_key_pool(fb_prov)
             if fb_keys:
                 print(f"[!] [ModelRouter] All keys for '{provider}' exhausted. Cascading failover to '{fb_prov}'...")
                 fb_model = self.get_model_for_task(task_type, fb_prov)
-                return self._query_cloud_with_pool(
+                fb_res = self._query_cloud_with_pool(
                     provider=fb_prov,
                     keys=fb_keys,
                     model=fb_model,
@@ -405,6 +410,13 @@ class ModelRouter:
                     system=system,
                     format=format,
                 )
+                fb_resp_str = fb_res.get("response", "") if isinstance(fb_res, dict) else ""
+                fb_is_err = isinstance(fb_res, dict) and (
+                    "[HTTP Error" in fb_resp_str or "[Request Error" in fb_resp_str or "[ModelRouter Error]" in fb_resp_str
+                )
+                if not fb_is_err:
+                    return fb_res
+                last_error = fb_res
 
         return last_error or {
             "model": model,

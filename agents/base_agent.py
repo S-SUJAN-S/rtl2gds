@@ -183,15 +183,14 @@ class BaseAgent:
             blocks = [p.strip() for p in parts if len(p.strip()) > 30]
             text = max(blocks, key=len) if blocks else text
 
-        # Find where module starts if there are preamble comments
-        if "module " in text:
+        # Find where timescale or module starts, stripping any leading HTTP error headers
+        if "`timescale" in text:
+            ts_idx = text.find("`timescale")
+            text = text[ts_idx:]
+        elif "module " in text:
             idx = text.find("module ")
-            # Only trim if module is not preceded by `timescale or header comments
             header_sub = text[:idx]
-            if "`timescale" in header_sub:
-                ts_idx = text.find("`timescale")
-                text = text[ts_idx:]
-            elif idx > 0 and not header_sub.strip().startswith("//") and not header_sub.strip().startswith("/*"):
+            if idx > 0 and not header_sub.strip().startswith("//") and not header_sub.strip().startswith("/*"):
                 text = text[idx:]
 
         return text.strip()

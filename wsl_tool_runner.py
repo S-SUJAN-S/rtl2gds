@@ -219,7 +219,7 @@ def run_iverilog_sim(verilog_file: str, tb_file: str,
     out    = f"/tmp/rtl_sim_{top_module or 'out'}.vvp"
 
     top_flag = f"-s {top_module}" if top_module else ""
-    compile_cmd = f"iverilog -o {out} {top_flag} {wsl_tb} {wsl_v} 2>&1"
+    compile_cmd = f"iverilog -g2012 -o {out} {top_flag} {wsl_tb} {wsl_v} 2>&1"
     rc = _run_wsl(compile_cmd, timeout=30)
 
     if not rc.success:

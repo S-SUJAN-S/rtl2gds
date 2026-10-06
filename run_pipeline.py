@@ -222,11 +222,16 @@ class AutonomousEDAPipeline:
         hdr(f"STAGE 1 - FRONTEND RTL GENERATION & VERIFICATION | {self.design_name}")
         s1: Dict[str, Any] = {}
 
-        # 1.1 Specification Parsing
         if self.user_prompt:
             info("1.1 Parsing natural language hardware specification...")
             spec_agent = SpecParserAgent()
             spec = spec_agent.parse(self.user_prompt, design_name=self.design_name)
+            if self.design_name in CANONICAL_DESIGNS:
+                cfg = CANONICAL_DESIGNS[self.design_name]
+                if not spec.get("protocol") or str(spec.get("protocol")).lower() in ["custom", "none"]:
+                    spec["protocol"] = cfg.get("protocol", "custom")
+                if "has_clock" in cfg and spec.get("has_clock") is None:
+                    spec["has_clock"] = cfg["has_clock"]
             self._save_artifact("spec.json", json.dumps(spec, indent=2))
             ok(f"Specification parsed: {spec.get('protocol','custom')} protocol, {len(spec.get('ports',[]))} ports")
         else:

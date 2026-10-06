@@ -272,8 +272,15 @@ Output the ENTIRE corrected testbench. Last line: endmodule"""
         }
 
     def _apply_fix(self, path: Path, fixed_code: str):
-        if fixed_code and len(fixed_code) > 20:
-            path.write_text(fixed_code, encoding="utf-8")
+        if not fixed_code or len(fixed_code) < 20:
+            return
+        if "[HTTP Error" in fixed_code or "[Request Error" in fixed_code or "[ModelRouter Error" in fixed_code:
+            print("  [SimECO] [WARN] LLM returned error string. Skipping overwrite.")
+            return
+        if "module " not in fixed_code or "endmodule" not in fixed_code:
+            print("  [SimECO] [WARN] Patch missing module/endmodule definition. Skipping overwrite.")
+            return
+        path.write_text(fixed_code, encoding="utf-8")
 
     def _extract_compile_errors(self, output: str) -> List[str]:
         errors = []
