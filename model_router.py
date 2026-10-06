@@ -113,11 +113,11 @@ PROVIDER_CONFIGS = {
         "env_prefix": "GEMINI_API_KEY",
         "signup_url": "https://aistudio.google.com/app/apikey",
         "models": {
-            "rtl": "gemini-2.5-flash",
-            "complex": "gemini-1.5-pro",
-            "sta": "gemini-2.5-flash",
-            "general": "gemini-2.5-flash",
-            "reasoning": "gemini-2.5-flash",
+            "rtl": "gemini-flash-latest",
+            "complex": "gemini-flash-latest",
+            "sta": "gemini-flash-latest",
+            "general": "gemini-flash-latest",
+            "reasoning": "gemini-flash-latest",
         },
     },
     "nvidia": {
@@ -126,11 +126,11 @@ PROVIDER_CONFIGS = {
         "env_prefix": "NVIDIA_API_KEY",
         "signup_url": "https://build.nvidia.com",
         "models": {
-            "rtl": "mistralai/codestral-22b-instruct-v0.1",
-            "complex": "nvidia/llama-3.1-nemotron-70b-instruct",
-            "sta": "nvidia/llama-3.1-nemotron-70b-instruct",
-            "general": "nvidia/llama-3.1-nemotron-70b-instruct",
-            "reasoning": "deepseek-ai/deepseek-v4.1-flash",
+            "rtl": "google/diffusiongemma-26b-a4b-it",
+            "complex": "google/diffusiongemma-26b-a4b-it",
+            "sta": "google/diffusiongemma-26b-a4b-it",
+            "general": "google/diffusiongemma-26b-a4b-it",
+            "reasoning": "google/diffusiongemma-26b-a4b-it",
         },
     },
     "openrouter": {
