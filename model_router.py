@@ -194,6 +194,10 @@ class ModelRouter:
         self.ssl_context.verify_mode = ssl.CERT_NONE
         self.active_provider = self._resolve_provider(provider)
 
+    def _get_api_key(self, provider: str) -> Optional[str]:
+        pool = self._get_key_pool(provider)
+        return pool[0] if pool else None
+
     def _get_key_pool(self, provider: str) -> List[str]:
         if self.override_api_key:
             return [self.override_api_key]
