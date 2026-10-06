@@ -147,7 +147,7 @@ def check_wsl_tools() -> dict:
     }
     results = {}
     for name, cmd in tools.items():
-        r = _run_wsl(cmd, timeout=10)
+        r = _run_wsl(cmd, timeout=15)
         if r.success or (r.stdout and r.stdout.strip()):
             ver = (r.stdout or r.stderr).strip().split("\n")[0]
             results[name] = ver
@@ -161,12 +161,30 @@ def check_wsl_tools() -> dict:
 def run_verilator_lint(verilog_file: str) -> LintResult:
     """
     Run Verilator --lint-only on a Verilog file.
+    Falls back gracefully to Icarus Verilog syntax check if Verilator is unavailable.
     """
     wsl_file = _wsl_path(verilog_file)
     cmd = f"verilator --lint-only -Wall -Wno-fatal --timing {wsl_file} 2>&1"
     r   = _run_wsl(cmd, timeout=60)
 
     combined = (r.stdout + r.stderr).strip()
+
+    # Graceful fallback to iverilog -tnull if verilator is not found
+    if "not found" in combined.lower() or (not r.success and "verilator" not in combined.lower()):
+        fb_cmd = f"iverilog -Wall -tnull {wsl_file} 2>&1"
+        rf = _run_wsl(fb_cmd, timeout=30)
+        fb_out = (rf.stdout + rf.stderr).strip()
+        errors = [l.strip() for l in fb_out.splitlines() if "error" in l.lower()]
+        warnings = [l.strip() for l in fb_out.splitlines() if "warning" in l.lower()]
+        return LintResult(
+            passed=(rf.returncode == 0 and len(errors) == 0),
+            error_count=len(errors),
+            warning_count=len(warnings),
+            errors=errors,
+            warnings=warnings,
+            raw_output=f"[Verilator unavailable; fell back to iverilog syntax check]\n{fb_out}",
+        )
+
     errors   = []
     warnings = []
 
