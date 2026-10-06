@@ -38,9 +38,9 @@ import io
 
 # Force UTF-8 encoding on Windows to prevent cp1252 exceptions
 if sys.stdout.encoding != "utf-8":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace", line_buffering=True)
 if sys.stderr.encoding != "utf-8":
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace", line_buffering=True)
 
 import argparse
 import json
@@ -284,11 +284,15 @@ class AutonomousEDAPipeline:
         })
 
         # 1.4 Self-Checking Testbench Generation with SVA
-        info("1.4 Generating self-checking testbench with assertions & watchdogs...")
-        tb_agent = TBGeneratorAgent()
-        tb_res = tb_agent.generate(spec, str(self.dut_path), verbose=self.verbose)
-        self._save_artifact(f"{self.design_name}_tb.v", tb_res["tb_verilog"])
-        ok(f"Testbench generated: {tb_res['tb_path']} ({len(tb_res['tb_verilog'].splitlines())} lines)")
+        if self.user_prompt or not self.tb_path.exists():
+            info("1.4 Generating self-checking testbench with assertions & watchdogs...")
+            tb_agent = TBGeneratorAgent()
+            tb_res = tb_agent.generate(spec, str(self.dut_path), verbose=self.verbose)
+            self._save_artifact(f"{self.design_name}_tb.v", tb_res["tb_verilog"])
+            ok(f"Testbench generated: {tb_res['tb_path']} ({len(tb_res['tb_verilog'].splitlines())} lines)")
+        else:
+            info(f"1.4 Using existing testbench source: {self.tb_path.name}")
+            self._save_artifact(f"{self.design_name}_tb.v", self.tb_path.read_text(encoding="utf-8"))
 
         # 1.5 Simulation & Fault Classification ECO Loop
         info("1.5 Executing simulation in Icarus Verilog + Fault Classifier ECO...")
@@ -548,7 +552,7 @@ def main():
     parser.add_argument("--stages", type=str, default="1,2,3,4", help="Comma-separated stages (default: 1,2,3,4)")
     parser.add_argument("--test-all", action="store_true", help="Execute complete 4-design canonical verification suite")
     parser.add_argument("--quiet", action="store_true", help="Minimal console logging")
-    parser.add_argument("--provider", type=str, choices=["cerebras", "groq", "deepseek", "gemini", "openrouter", "ollama"], help="LLM provider (default: auto-detected from env)")
+    parser.add_argument("--provider", type=str, choices=["cerebras", "groq", "deepseek", "gemini", "openrouter", "ollama", "nvidia"], help="LLM provider (default: auto-detected from env)")
     parser.add_argument("--api-key", type=str, help="Override API key for the chosen provider")
 
     args = parser.parse_args()
@@ -576,7 +580,7 @@ def main():
             hdr(f"CANONICAL DESIGN BENCHMARK: {name}")
             pipeline = AutonomousEDAPipeline(
                 design_name=name,
-                prompt=cfg["prompt"],
+                prompt=None,
                 clock_period_ns=cfg.get("clock_period_ns", 10.0),
                 stages=stages,
                 verbose=verbose,

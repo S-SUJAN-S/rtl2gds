@@ -198,8 +198,10 @@ class StreamResponse:
         return self.response_text
 
 class ModelRouter:
-    def __init__(self, provider: Optional[str] = None, api_key: Optional[str] = None, timeout: int = 120):
+    def __init__(self, provider: Optional[str] = None, api_key: Optional[str] = None, timeout: int = 35):
         self.timeout = timeout
+        import socket
+        socket.setdefaulttimeout(timeout)
         self.override_api_key = api_key
         self._key_indices: Dict[str, int] = {}
         self.ssl_context = ssl.create_default_context()
@@ -351,8 +353,13 @@ class ModelRouter:
         task_type: str,
         stream: bool,
         system: Optional[str],
-        format: Optional[str],
+        format: Optional[str] = None,
+        tried_providers: Optional[set] = None,
     ) -> Union[Dict[str, Any], StreamResponse]:
+        if tried_providers is None:
+            tried_providers = set()
+        tried_providers.add(provider)
+
         cfg = PROVIDER_CONFIGS[provider]
         endpoint = cfg["api_base"]
 
@@ -394,7 +401,7 @@ class ModelRouter:
 
             return result
 
-        fallback_providers = [p for p in ["groq", "openrouter", "gemini", "cerebras", "deepseek"] if p != provider]
+        fallback_providers = [p for p in ["groq", "gemini", "nvidia", "openrouter", "cerebras", "deepseek"] if p not in tried_providers]
         for fb_prov in fallback_providers:
             fb_keys = self._get_key_pool(fb_prov)
             if fb_keys:
@@ -409,6 +416,7 @@ class ModelRouter:
                     stream=stream,
                     system=system,
                     format=format,
+                    tried_providers=tried_providers,
                 )
                 fb_resp_str = fb_res.get("response", "") if isinstance(fb_res, dict) else ""
                 fb_is_err = isinstance(fb_res, dict) and (
@@ -460,6 +468,7 @@ class ModelRouter:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {api_key}",
             "User-Agent": "RTL2GDS-Autonomous-EDA/1.0",
+            "Connection": "close",
         }
         if provider == "openrouter":
             headers["HTTP-Referer"] = "https://github.com/S-SUJAN-S/rtl2gds"

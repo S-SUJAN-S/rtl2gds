@@ -265,8 +265,8 @@ Output ONLY the Verilog testbench code."""
             stripped = line.strip()
 
             # Prevent illegal assignment to DUT outputs (l-values only)
-            # Do NOT strip equality comparisons like (sum == 0), if (out == 1), or assert(out == 1)
-            if not re.search(r'\b(if|assert|while|\$display|case|function|task)\b', stripped):
+            # Do NOT strip equality comparisons like (sum == 0), if (out == 1), or assert(out == 1), or $display statements
+            if "$display" not in stripped and "$write" not in stripped and not re.search(r'\b(if|assert|while|case|function|task)\b', stripped):
                 for out_port in dut_outputs:
                     # Match assignment: "out_port = ..." or "out_port <= ..." but NOT "== ..."
                     if re.search(rf'(?:^|[;,\s])\b{re.escape(out_port)}\s*(?:<=|=(?!=))', stripped):

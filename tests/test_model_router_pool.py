@@ -32,19 +32,22 @@ class TestModelRouterKeyPool(unittest.TestCase):
     def test_01_detect_all_keys(self):
         """Verify that 3 Groq keys, 3 OpenRouter keys, and 3 Gemini keys are detected from .env."""
         groq_keys = self.router._get_key_pool("groq")
+        nvidia_keys = self.router._get_key_pool("nvidia")
         openrouter_keys = self.router._get_key_pool("openrouter")
         gemini_keys = self.router._get_key_pool("gemini")
 
         print(f"\n[Test 1] Detected Groq keys: {len(groq_keys)}")
+        print(f"[Test 1] Detected NVIDIA NIM keys: {len(nvidia_keys)}")
         print(f"[Test 1] Detected OpenRouter keys: {len(openrouter_keys)}")
         print(f"[Test 1] Detected Gemini keys: {len(gemini_keys)}")
 
         self.assertGreaterEqual(len(groq_keys), 3, "Expected at least 3 Groq API keys in pool")
+        self.assertGreaterEqual(len(nvidia_keys), 1, "Expected at least 1 NVIDIA NIM API key in pool")
         self.assertGreaterEqual(len(openrouter_keys), 3, "Expected at least 3 OpenRouter API keys in pool")
         self.assertGreaterEqual(len(gemini_keys), 3, "Expected at least 3 Gemini API keys in pool")
 
         # Ensure all keys in each pool are distinct non-empty strings
-        for name, pool in [("Groq", groq_keys), ("OpenRouter", openrouter_keys), ("Gemini", gemini_keys)]:
+        for name, pool in [("Groq", groq_keys), ("NVIDIA", nvidia_keys), ("OpenRouter", openrouter_keys), ("Gemini", gemini_keys)]:
             self.assertEqual(len(pool), len(set(pool)), f"{name} key pool contains duplicates")
             for k in pool:
                 self.assertTrue(bool(k.strip()), f"{name} contains an empty key")
