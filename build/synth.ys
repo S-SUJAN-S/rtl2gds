@@ -1,7 +1,7 @@
 
-        read_verilog examples/sample_counter.v
-        synth -top sample_counter
+        read_verilog designs/systolic_array\systolic_mm_accel.v
+        synth -top systolic_array
         opt -purge
-        write_verilog -noattr build/sample_counter_synth.v
-        write_json build/sample_counter_netlist.json
+        write_verilog -noattr build/systolic_array_synth.v
+        write_json build/systolic_array_netlist.json
         

@@ -1,0 +1,99 @@
+{
+    "super_agent": {
+        "name": "Stage1_SuperOrchestrator",
+        "description": "Master Front-End RTL & Verification Orchestrator driving 11 Sub-Agents with Zero-Hallucination Policy",
+        "model_tier": "pro",
+        "zero_hallucination_policy": {
+            "web_search_required_on_uncertainty": true,
+            "verification_agent_mandatory": true,
+            "fact_checking_enabled": true
+        },
+        "signoff_thresholds": {
+            "test_pass_rate_pct": 100.0,
+            "line_coverage_pct": 100.0,
+            "branch_coverage_pct": 100.0,
+            "functional_coverage_pct": 95.0,
+            "max_allowed_lint_warnings": 0,
+            "output_verification_status": "VERIFIED_CORRECT"
+        }
+    },
+    "sub_agents": [
+        {
+            "id": "1.1",
+            "name": "subagent_1_1_microarch",
+            "role": "Micro-Architecture Specification Agent",
+            "model_tier": "pro",
+            "description": "Establishes hardware spec, register map, pinouts, and FSM state transition diagrams."
+        },
+        {
+            "id": "1.2",
+            "name": "subagent_1_2_rtl_coder",
+            "role": "RTL Hardware Coder Agent",
+            "model_tier": "pro",
+            "description": "Generates clean synthesizable Verilog/SystemVerilog with strict blocking/non-blocking rules."
+        },
+        {
+            "id": "1.3",
+            "name": "subagent_1_3_static_linter",
+            "role": "Static Lint & Auto-Patch Agent",
+            "model_tier": "pro",
+            "description": "Runs Verilator --lint-only -Wall, parses stdout logs, and auto-patches RTL latches and width truncations."
+        },
+        {
+            "id": "1.4",
+            "name": "subagent_1_4_cdc_auditor",
+            "role": "CDC & RDC Auditor Agent",
+            "model_tier": "pro",
+            "description": "Audits clock domain crossings, synchronizers, Async FIFOs, and reset de-assertion paths."
+        },
+        {
+            "id": "1.5",
+            "name": "subagent_1_5_tb_bfm_setup",
+            "role": "Testbench & BFM Architecture Agent",
+            "model_tier": "pro",
+            "description": "Constructs testbenches, bus functional models (BFMs), scoreboards, and golden reference models."
+        },
+        {
+            "id": "1.6",
+            "name": "subagent_1_6_directed_sim",
+            "role": "Directed Simulation Agent",
+            "model_tier": "pro",
+            "description": "Compiles and runs directed test cases via Icarus Verilog (iverilog/vvp)."
+        },
+        {
+            "id": "1.7",
+            "name": "subagent_1_7_random_testing",
+            "role": "Constrained-Random Stimulus Agent",
+            "model_tier": "pro",
+            "description": "Injects randomized inputs to uncover unexpected state machine deadlocks and corner cases."
+        },
+        {
+            "id": "1.8",
+            "name": "subagent_1_8_code_coverage",
+            "role": "Code Coverage Analysis Agent",
+            "model_tier": "pro",
+            "description": "Evaluates Line, Branch, Toggle, and FSM State Coverage metrics."
+        },
+        {
+            "id": "1.9",
+            "name": "subagent_1_9_functional_sva",
+            "role": "Functional Coverage & SVA Agent",
+            "model_tier": "pro",
+            "description": "Monitors Covergroups and SystemVerilog Assertions (SVA) for protocol compliance."
+        },
+        {
+            "id": "1.10_verifier",
+            "name": "subagent_1_10_verifier",
+            "role": "Output Verification & Fact-Checking Agent",
+            "model_tier": "pro",
+            "description": "Independently verifies all sub-agent outputs for physical accuracy, zero hallucination, and web-searches any uncertain specifications."
+        },
+        {
+            "id": "1.11_signoff",
+            "name": "subagent_1_11_signoff_gate",
+            "role": "Front-End Signoff Review Gatekeeper",
+            "model_tier": "pro",
+            "description": "Audits all 10 stage reports + Output Verifier approval and issues final Front-End Signoff Certificate."
+        }
+    ]
+}

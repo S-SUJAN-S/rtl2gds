@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <report-database>
- <description>XOR /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19/results/signoff/alu4bit.gds vs. /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19/results/signoff/alu4bit.klayout.gds</description>
+ <description>XOR /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49/results/signoff/alu4bit.gds vs. /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49/results/signoff/alu4bit.klayout.gds</description>
  <original-file/>
  <generator>drc: script='/openlane/scripts/klayout/xor.drc'</generator>
  <top-cell>alu4bit</top-cell>

@@ -1,0 +1,105 @@
+# =============================================================================
+# RTL-to-GDSII Autonomous EDA Pipeline - Model Router Configuration v1.0.0
+# =============================================================================
+# Supports Free Cloud APIs (Groq, Google Gemini, OpenRouter) and Local Ollama.
+#
+# To use a cloud provider, export your free API key or add it to a .env file:
+#   export GROQ_API_KEY="gsk_..."      (Free: https://console.groq.com/keys)
+#   export GEMINI_API_KEY="AIza_..."   (Free: https://aistudio.google.com/app/apikey)
+# =============================================================================
+
+default_provider: "groq"  # groq | gemini | openrouter | ollama
+
+providers:
+  groq:
+    name: "Groq Cloud (Ultra-Fast 500+ tok/s Free Tier)"
+    api_base: "https://api.groq.com/openai/v1/chat/completions"
+    env_key: "GROQ_API_KEY"
+    signup: "https://console.groq.com/keys"
+    models:
+      rtl: "qwen-2.5-coder-32b"
+      complex: "llama-3.3-70b-versatile"
+      sta: "llama-3.3-70b-versatile"
+      general: "llama-3.3-70b-versatile"
+      reasoning: "deepseek-r1-distill-llama-70b"
+
+  gemini:
+    name: "Google Gemini (1M Token Context Free Tier)"
+    api_base: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+    env_key: "GEMINI_API_KEY"
+    signup: "https://aistudio.google.com/app/apikey"
+    models:
+      rtl: "gemini-2.5-flash"
+      complex: "gemini-1.5-pro"
+      sta: "gemini-2.5-flash"
+      general: "gemini-2.5-flash"
+      reasoning: "gemini-2.5-flash"
+
+  openrouter:
+    name: "OpenRouter (Multi-Model Free Endpoints)"
+    api_base: "https://openrouter.ai/api/v1/chat/completions"
+    env_key: "OPENROUTER_API_KEY"
+    signup: "https://openrouter.ai/keys"
+    models:
+      rtl: "qwen/qwen-2.5-coder-32b-instruct:free"
+      complex: "meta-llama/llama-3.3-70b-instruct:free"
+      sta: "meta-llama/llama-3.3-70b-instruct:free"
+      general: "meta-llama/llama-3.3-70b-instruct:free"
+      reasoning: "deepseek/deepseek-r1:free"
+
+  ollama:
+    name: "Local Ollama (Offline Mode)"
+    api_base: "http://127.0.0.1:11434/api/chat"
+    env_key: null
+    models:
+      rtl: "qwen2.5-coder:7b"
+      complex: "qwen2.5-coder:7b"
+      sta: "qwen2.5-coder:7b"
+      general: "qwen2.5-coder:3b"
+
+# Keyword-based task classification
+auto_routing:
+  rtl_keywords:
+    - "verilog"
+    - "systemverilog"
+    - "rtl"
+    - "module"
+    - "always @"
+    - "posedge"
+    - "negedge"
+    - "flip-flop"
+    - "register"
+    - "synthesis"
+    - "yosys"
+    - "openroad"
+    - "openlane"
+    - "gds"
+    - "timing violation"
+    - "setup time"
+    - "hold time"
+    - "clock domain"
+    - "fifo"
+    - "alu"
+    - "uart"
+    - "spi"
+    - "i2c"
+    - "axi"
+    - "wishbone"
+    - "netlist"
+    - "floorplan"
+    - "placement"
+    - "routing"
+    - "pdk"
+    - "sky130"
+
+  complex_keywords:
+    - "architecture"
+    - "design pattern"
+    - "refactor"
+    - "explain"
+    - "analyze"
+    - "optimize"
+    - "debug"
+    - "class"
+    - "inheritance"
+    - "algorithm"

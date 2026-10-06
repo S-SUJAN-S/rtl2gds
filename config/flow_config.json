@@ -21,6 +21,7 @@
         "target_setup_slack_ns": 0.0,
         "target_hold_slack_ns": 0.0,
         "auto_eco_gate_sizing": true,
-        "auto_floorplan_scaling": true
+        "auto_floorplan_scaling": true,
+        "drc_repair_mode": "closed_loop"
     }
 }

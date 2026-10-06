@@ -1,0 +1,3 @@
+read_verilog sync_fifo.v
+synth -top sync_fifo
+stat

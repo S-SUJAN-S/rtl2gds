@@ -1,0 +1,3 @@
+read_verilog axi4_lite_sram.v
+synth -top axi4_lite_sram
+stat

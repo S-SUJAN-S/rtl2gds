@@ -6,6 +6,7 @@ module uart_tb;
     wire tx_busy;
     wire [7:0] rx_data;
     wire rx_done;
+    wire serial_line;
 
     uart_top uut (
         .clk(clk),
@@ -14,7 +15,9 @@ module uart_tb;
         .tx_data(tx_data),
         .tx_busy(tx_busy),
         .rx_data(rx_data),
-        .rx_done(rx_done)
+        .rx_done(rx_done),
+        .tx(serial_line),
+        .rx(serial_line)
     );
 
     always #5 clk = ~clk; // 100MHz clock

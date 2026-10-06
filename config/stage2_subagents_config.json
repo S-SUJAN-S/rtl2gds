@@ -1,0 +1,66 @@
+{
+    "super_agent": {
+        "id": "stage2_super_agent",
+        "name": "Stage 2 Physical Implementation Orchestrator",
+        "model_tier": "pro",
+        "description": "Orchestrates the ASIC Physical Design flow (Logic Synthesis to STA). Enforces an autonomous ECO feedback loop."
+    },
+    "sub_agents": [
+        {
+            "id": "2.1",
+            "name": "SubAgent2_1_LogicSynthesis",
+            "role": "Logic Synthesis & Technology Mapping Agent",
+            "model_tier": "pro",
+            "description": "Analyzes Yosys synthesis logs, maps RTL to target PDK standard cells, and audits area utilization."
+        },
+        {
+            "id": "2.2",
+            "name": "SubAgent2_2_Floorplanning",
+            "role": "Floorplanning & PDN Agent",
+            "model_tier": "pro",
+            "description": "Verifies core aspect ratio, die area, macro pin placements, and Power Distribution Network (PDN) integrity."
+        },
+        {
+            "id": "2.3",
+            "name": "SubAgent2_3_Placement",
+            "role": "Placement & Density Agent",
+            "model_tier": "pro",
+            "description": "Analyzes RePLace global and detailed placement logs for localized congestion and overlap violations."
+        },
+        {
+            "id": "2.4",
+            "name": "SubAgent2_4_CTS",
+            "role": "Clock Tree Synthesis Agent",
+            "model_tier": "pro",
+            "description": "Audits TritonCTS outputs for clock skew, insertion delay, and proper clock buffer utilization."
+        },
+        {
+            "id": "2.5",
+            "name": "SubAgent2_5_Routing",
+            "role": "Routing & DRC Agent",
+            "model_tier": "pro",
+            "description": "Checks TritonRoute logs for DRC violations, shorts, minimum spacing, and antenna violations."
+        },
+        {
+            "id": "2.6",
+            "name": "SubAgent2_6_STA_ECO",
+            "role": "Static Timing Analysis (STA) & ECO Agent",
+            "model_tier": "pro",
+            "description": "Deep-dives into OpenSTA reports (WNS/TNS). Proposes automated ECO fixes like gate sizing or buffer insertion."
+        },
+        {
+            "id": "2.7_verifier",
+            "name": "SubAgent2_7_OutputVerifier",
+            "role": "Zero-Hallucination Fact-Checking Agent",
+            "model_tier": "pro",
+            "description": "Independent auditor. Cross-references proposed ECOs and DRC analyses against physical design fundamentals to guarantee Zero-Hallucination."
+        },
+        {
+            "id": "2.8_signoff",
+            "name": "SubAgent2_8_SignoffGate",
+            "role": "Physical Layout Signoff Gatekeeper",
+            "model_tier": "pro",
+            "description": "The final decision maker. Evaluates the full backend pipeline and signs off the design for Stage 3 (Tape-out) OR triggers the Autonomous ECO Repair Loop."
+        }
+    ]
+}

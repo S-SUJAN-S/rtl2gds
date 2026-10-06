@@ -1,24 +1,54 @@
-# RTL to GDSII Automation Gitignore
+# =============================================================================
+# RTL-to-GDSII AI Automation - .gitignore
+# =============================================================================
 
-# OpenLane environment and intermediate runs (Massive size)
-OpenLane/
-
-# Python cache
+# Python Bytecode and Caches
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Local config or secrets
+# Environment Variables & Secrets
 .env
+.env.local
 secret/
+*.key
 
-# Temporary files
-*.swp
-*~
-.DS_Store
+# Simulation & Waveform Dumps
+*.vcd
+*.wdb
+*.vvp
+*.fsdb
+*.evcd
 
-# Logs
-*.log
+# Transient EDA Pipeline Outputs & Regression Runs
+outputs/pipeline_runs/
+outputs/stage1/
+outputs/stage2/
+outputs/sdpa_accelerator/
+build/*.def
+build/*.ys
+build/*.v
+build/*.tcl
+!build/pnr.tcl
+!build/synth.ys
 
-# Large Manufacturing Files (Exceeds GitHub 100MB Limit)
+# Large Silicon Manufacturing Files (Avoid GitHub 100MB Limit)
 *.gds
 *.mag
+*.lef
+*.rpt.debug.gz
+*.rpt.error.gz
+
+# System & OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# OpenLane Transient Runs
+OpenLane/
+designs/**/runs/

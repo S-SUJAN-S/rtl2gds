@@ -1,19 +1,19 @@
 Design Name: alu4bit
-Run Directory: /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19
+Run Directory: /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49
 ----------------------------------------
 
 Magic DRC Summary:
-Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19/reports/signoff/drc.rpt
+Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49/reports/signoff/drc.rpt
 Total Magic DRC violations is 0
 ----------------------------------------
 
 LVS Summary:
-Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19/logs/signoff/37-alu4bit.lef.lvs.log
+Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49/logs/signoff/37-alu4bit.lef.lvs.log
 Number of nets: 94                         |Number of nets: 94                         
 Design is LVS clean.
 ----------------------------------------
 
 Antenna Summary:
-Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_07.32.19/logs/signoff/39-arc.log
+Source: /openlane/designs/alu4bit/runs/RUN_2026.08.05_12.32.49/logs/signoff/39-arc.log
 Pin violations: 0
 Net violations: 0
