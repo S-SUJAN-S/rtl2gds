@@ -543,7 +543,7 @@ def main():
     parser.add_argument("--stages", type=str, default="1,2,3,4", help="Comma-separated stages (default: 1,2,3,4)")
     parser.add_argument("--test-all", action="store_true", help="Execute complete 4-design canonical verification suite")
     parser.add_argument("--quiet", action="store_true", help="Minimal console logging")
-    parser.add_argument("--provider", type=str, choices=["groq", "gemini", "openrouter", "ollama"], help="LLM provider (default: auto-detected from env)")
+    parser.add_argument("--provider", type=str, choices=["cerebras", "groq", "deepseek", "gemini", "openrouter", "ollama"], help="LLM provider (default: auto-detected from env)")
     parser.add_argument("--api-key", type=str, help="Override API key for the chosen provider")
 
     args = parser.parse_args()
