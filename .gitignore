@@ -23,6 +23,15 @@ secret/
 *.vvp
 *.fsdb
 *.evcd
+*.out
+*.obj
+*.o
+*.log
+*sdpa_tb
+
+# Gate-Level Netlists & Temporary Synthesis Outputs
+*_netlist.v
+*_synth.v
 
 # Transient EDA Pipeline Outputs & Regression Runs
 outputs/pipeline_runs/
