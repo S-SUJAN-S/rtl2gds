@@ -120,6 +120,19 @@ PROVIDER_CONFIGS = {
             "reasoning": "gemini-2.5-flash",
         },
     },
+    "nvidia": {
+        "name": "NVIDIA NIM Cloud (1,000 Free Credits | H100 DGX Clusters)",
+        "api_base": "https://integrate.api.nvidia.com/v1/chat/completions",
+        "env_prefix": "NVIDIA_API_KEY",
+        "signup_url": "https://build.nvidia.com",
+        "models": {
+            "rtl": "mistralai/codestral-22b-instruct-v0.1",
+            "complex": "nvidia/llama-3.1-nemotron-70b-instruct",
+            "sta": "nvidia/llama-3.1-nemotron-70b-instruct",
+            "general": "nvidia/llama-3.1-nemotron-70b-instruct",
+            "reasoning": "deepseek-ai/deepseek-v4.1-flash",
+        },
+    },
     "openrouter": {
         "name": "OpenRouter (Free Community Endpoints)",
         "api_base": "https://openrouter.ai/api/v1/chat/completions",
