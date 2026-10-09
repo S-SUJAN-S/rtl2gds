@@ -229,11 +229,11 @@ class SimECOAgent(BaseAgent):
 SIMULATION OUTPUT (failure):
 {sim_output[:1500]}
 
-DUT VERILOG (last 40 lines):
-{self._last_lines(dut_code, 40)}
+DUT VERILOG:
+{dut_code[:2500]}
 
-TESTBENCH (last 40 lines):
-{self._last_lines(tb_code, 40)}
+TESTBENCH:
+{tb_code[:3500]}
 
 Classify: Is this an RTL bug or a TESTBENCH bug?"""
 
@@ -275,10 +275,10 @@ FAILING SIMULATION CHECKS:
 {compact_fail}
 
 DUT VERILOG (reference only - do NOT change this):
-{dut_code[:1000]}
+{dut_code[:2500]}
 
 CURRENT TESTBENCH:
-{tb_code}
+{tb_code[:4000]}
 
 Output the ENTIRE corrected testbench. Last line: endmodule"""
             fix_result = self.query(fix_prompt, task_type="rtl", system=SYSTEM_FIX_TB, verbose=verbose)

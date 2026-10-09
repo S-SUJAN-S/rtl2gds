@@ -220,20 +220,37 @@ app.exit(0)
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python scripts/run_openlane_physical_flow.py <design_name>")
+    import argparse
+    import re
+    parser = argparse.ArgumentParser(description="Run OpenLane Physical Flow")
+    parser.add_argument("design_pos", nargs="?", default=None, help="Design name (positional)")
+    parser.add_argument("--design", "-d", default=None, help="Design name (flag)")
+    args = parser.parse_args()
+
+    design = args.design or args.design_pos
+    if not design:
+        print("Usage: python scripts/run_openlane_physical_flow.py <design_name> OR --design <design_name>")
         sys.exit(1)
 
-    design = sys.argv[1]
-    if design not in PHYSICAL_CONFIGS:
-        print(f"Unknown design '{design}'. Supported: {list(PHYSICAL_CONFIGS.keys())}")
-        sys.exit(1)
-
-    cfg = PHYSICAL_CONFIGS[design]
     rtl_path = DESIGNS_DIR / design / f"{design}.v"
     if not rtl_path.exists():
         print(f"Error: RTL not found at {rtl_path}")
         sys.exit(1)
+
+    if design in PHYSICAL_CONFIGS:
+        cfg = PHYSICAL_CONFIGS[design]
+    else:
+        # Dynamic fallback config for novel autonomous designs
+        rtl_code = rtl_path.read_text(encoding="utf-8")
+        has_clk = bool(re.search(r'\b(clk|clock)\b', rtl_code, re.I))
+        cfg = {
+            "clock_port": "clk" if has_clk else None,
+            "clock_period": 10.0,
+            "run_cts": has_clk,
+            "die_area": "0 0 80 80",
+            "core_box": [15, 15, 65, 65],
+        }
+        print(f"  [AutoConfig] Generated dynamic physical config for novel design '{design}': Clock={cfg['clock_port']}")
 
     setup_openlane_design(design, rtl_path, cfg)
     res = execute_physical_flow(design)
