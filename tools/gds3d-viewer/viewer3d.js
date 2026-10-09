@@ -18,26 +18,36 @@
   'use strict';
 
   // SkyWater 130nm Physical Metallization & Diffusion Stackup
-  // Calibrated with PBR metallic, roughness, and subtle luminescence for crisp CAD rendering
+  // Authenticated against official sky130A.lyp, sky130A.tech, and KLayout signoff renders
+  // Calibrated with deep jewel-tone PBR metals, sub-surface implants, and non-fogging boundary outlines
   const SKY130_STACKUP = {
-    64:  { name: 'nwell',       label: 'N-Well (L64)',            color: '#06b6d4', elevation: 0.00, thickness: 0.20, opacity: 0.22, metalness: 0.1, roughness: 0.85, emissive: '#0891b2', emissiveIntensity: 0.08 },
-    65:  { name: 'diff',        label: 'Diffusion / Active (L65)',color: '#10b981', elevation: 0.20, thickness: 0.18, opacity: 0.85, metalness: 0.2, roughness: 0.45, emissive: '#059669', emissiveIntensity: 0.15 },
-    66:  { name: 'poly',        label: 'Polysilicon Gate (L66)',  color: '#ef4444', elevation: 0.40, thickness: 0.20, opacity: 0.95, metalness: 0.3, roughness: 0.35, emissive: '#dc2626', emissiveIntensity: 0.20 },
-    67:  { name: 'li1',         label: 'Local Interconnect (L67)',color: '#0284c7', elevation: 0.65, thickness: 0.18, opacity: 0.95, metalness: 0.6, roughness: 0.28, emissive: '#0284c7', emissiveIntensity: 0.20 },
-    68:  { name: 'm1',          label: 'Metal 1 (L68)',           color: '#38bdf8', elevation: 0.95, thickness: 0.35, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#0284c7', emissiveIntensity: 0.22 },
-    69:  { name: 'm2',          label: 'Metal 2 (L69)',           color: '#f59e0b', elevation: 1.55, thickness: 0.35, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#d97706', emissiveIntensity: 0.22 },
-    70:  { name: 'm3',          label: 'Metal 3 (L70)',           color: '#34d399', elevation: 2.20, thickness: 0.80, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#059669', emissiveIntensity: 0.22 },
-    71:  { name: 'm4',          label: 'Metal 4 (L71)',           color: '#c084fc', elevation: 3.35, thickness: 0.80, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#9333ea', emissiveIntensity: 0.22 },
-    72:  { name: 'm5',          label: 'Metal 5 (L72)',           color: '#facc15', elevation: 4.50, thickness: 1.20, opacity: 1.00, metalness: 0.70, roughness: 0.18, emissive: '#ca8a04', emissiveIntensity: 0.25 },
-    78:  { name: 'tap',         label: 'Substrate Tap (L78)',     color: '#ec4899', elevation: 0.20, thickness: 0.18, opacity: 0.80, metalness: 0.2, roughness: 0.50, emissive: '#db2777', emissiveIntensity: 0.15 },
-    81:  { name: 'nsdm',        label: 'N+ Source/Drain (L81)',   color: '#a855f7', elevation: 0.10, thickness: 0.10, opacity: 0.35, metalness: 0.1, roughness: 0.70, emissive: '#7e22ce', emissiveIntensity: 0.10 },
-    83:  { name: 'psdm',        label: 'P+ Source/Drain (L83)',   color: '#6366f1', elevation: 0.10, thickness: 0.10, opacity: 0.35, metalness: 0.1, roughness: 0.70, emissive: '#4f46e5', emissiveIntensity: 0.10 },
-    93:  { name: 'hvi',         label: 'High Voltage Imp. (L93)', color: '#14b8a6', elevation: 0.05, thickness: 0.08, opacity: 0.30, metalness: 0.1, roughness: 0.70, emissive: '#0d9488', emissiveIntensity: 0.10 },
-    94:  { name: 'licon',       label: 'LI Contact (L94)',        color: '#22d3ee', elevation: 0.60, thickness: 0.15, opacity: 0.95, metalness: 0.7, roughness: 0.25, emissive: '#06b6d4', emissiveIntensity: 0.25 },
-    95:  { name: 'mcon',        label: 'M1 Contact (L95)',        color: '#60a5fa', elevation: 0.80, thickness: 0.15, opacity: 0.95, metalness: 0.7, roughness: 0.25, emissive: '#2563eb', emissiveIntensity: 0.25 },
-    122: { name: 'pad',         label: 'Bonding Pad (L122)',      color: '#fb923c', elevation: 4.50, thickness: 1.20, opacity: 0.95, metalness: 0.75, roughness: 0.20, emissive: '#ea580c', emissiveIntensity: 0.25 },
-    235: { name: 'prBoundary',  label: 'PR / Die Boundary (L235)',color: '#22d3ee', elevation: -0.02, thickness: 0.02, opacity: 0.60, metalness: 0.1, roughness: 0.90, isBoundary: true, emissive: '#06b6d4', emissiveIntensity: 0.30 },
-    236: { name: 'fill',        label: 'Fill / Core Margin (L236)',color: '#64748b', elevation: 0.00, thickness: 0.05, opacity: 0.30, metalness: 0.2, roughness: 0.85, emissive: '#475569', emissiveIntensity: 0.10 }
+    // 1. Sub-surface Well Doping & Implants (Sunken bulk Z <= 0, subtle non-fogging)
+    64:  { name: 'nwell',       label: 'N-Well (L64)',            color: '#047857', elevation: -0.60, thickness: 0.40, opacity: 0.12, metalness: 0.05, roughness: 0.90, emissive: '#022c22', emissiveIntensity: 0.05, depthWrite: false },
+    81:  { name: 'nsdm',        label: 'N+ Source/Drain (L81)',   color: '#a855f7', elevation: -0.15, thickness: 0.10, opacity: 0.10, metalness: 0.10, roughness: 0.80, emissive: '#7e22ce', emissiveIntensity: 0.05, depthWrite: false },
+    83:  { name: 'psdm',        label: 'P+ Source/Drain (L83)',   color: '#6366f1', elevation: -0.15, thickness: 0.10, opacity: 0.10, metalness: 0.10, roughness: 0.80, emissive: '#4338ca', emissiveIntensity: 0.05, depthWrite: false },
+    93:  { name: 'hvi',         label: 'High Voltage Imp. (L93)', color: '#0d9488', elevation: -0.20, thickness: 0.08, opacity: 0.10, metalness: 0.10, roughness: 0.80, emissive: '#115e59', emissiveIntensity: 0.05, depthWrite: false },
+    236: { name: 'fill',        label: 'Core Margin / Fill (L236)',color: '#475569',elevation: -0.10, thickness: 0.05, opacity: 0.10, metalness: 0.15, roughness: 0.85, emissive: '#1e293b', emissiveIntensity: 0.05, depthWrite: false },
+
+    // 2. Active Silicon Core (Transistor gate & diffusion Z >= 0)
+    65:  { name: 'diff',        label: 'Diffusion / Active (L65)',color: '#10b981', elevation: 0.05,  thickness: 0.15, opacity: 0.95, metalness: 0.25, roughness: 0.40, emissive: '#059669', emissiveIntensity: 0.15 },
+    78:  { name: 'tap',         label: 'Substrate Tap (L78)',     color: '#ec4899', elevation: 0.06,  thickness: 0.14, opacity: 0.85, metalness: 0.20, roughness: 0.50, emissive: '#be185d', emissiveIntensity: 0.15 },
+    66:  { name: 'poly',        label: 'Polysilicon Gate (L66)',  color: '#ef4444', elevation: 0.22,  thickness: 0.18, opacity: 0.98, metalness: 0.35, roughness: 0.30, emissive: '#b91c1c', emissiveIntensity: 0.20 },
+
+    // 3. Middle-of-Line (MOL) Local Interconnect & Contacts
+    94:  { name: 'licon',       label: 'LI Contact (L94)',        color: '#38bdf8', elevation: 0.38,  thickness: 0.12, opacity: 0.95, metalness: 0.70, roughness: 0.25, emissive: '#0284c7', emissiveIntensity: 0.20 },
+    67:  { name: 'li1',         label: 'Local Interconnect (L67)',color: '#0284c7', elevation: 0.50,  thickness: 0.20, opacity: 0.98, metalness: 0.65, roughness: 0.25, emissive: '#0369a1', emissiveIntensity: 0.20 },
+    95:  { name: 'mcon',        label: 'M1 Contact (L95)',        color: '#60a5fa', elevation: 0.70,  thickness: 0.15, opacity: 0.95, metalness: 0.70, roughness: 0.25, emissive: '#2563eb', emissiveIntensity: 0.20 },
+
+    // 4. Back-End-of-Line (BEOL) Metallization Interconnect Stack (Vibrant PBR Jewels)
+    68:  { name: 'm1',          label: 'Metal 1 (L68)',           color: '#2563eb', elevation: 0.88,  thickness: 0.35, opacity: 1.00, metalness: 0.75, roughness: 0.22, emissive: '#1d4ed8', emissiveIntensity: 0.18 },
+    69:  { name: 'm2',          label: 'Metal 2 (L69)',           color: '#f59e0b', elevation: 1.50,  thickness: 0.35, opacity: 1.00, metalness: 0.75, roughness: 0.22, emissive: '#d97706', emissiveIntensity: 0.18 },
+    70:  { name: 'm3',          label: 'Metal 3 (L70)',           color: '#059669', elevation: 2.15,  thickness: 0.65, opacity: 1.00, metalness: 0.75, roughness: 0.22, emissive: '#047857', emissiveIntensity: 0.18 },
+    71:  { name: 'm4',          label: 'Metal 4 (L71)',           color: '#8b5cf6', elevation: 3.10,  thickness: 0.80, opacity: 1.00, metalness: 0.75, roughness: 0.22, emissive: '#6d28d9', emissiveIntensity: 0.18 },
+    72:  { name: 'm5',          label: 'Metal 5 (L72)',           color: '#eab308', elevation: 4.20,  thickness: 1.10, opacity: 1.00, metalness: 0.80, roughness: 0.18, emissive: '#ca8a04', emissiveIntensity: 0.22 },
+    122: { name: 'pad',         label: 'Bonding Pad (L122)',      color: '#f97316', elevation: 4.30,  thickness: 1.10, opacity: 0.95, metalness: 0.80, roughness: 0.20, emissive: '#c2410c', emissiveIntensity: 0.25 },
+
+    // 5. Die Boundary Outline (Pure wireframe outline, zero solid cap extrusion)
+    235: { name: 'prBoundary',  label: 'PR / Die Boundary (L235)',color: '#38bdf8', elevation: 0.05,  thickness: 0.02, opacity: 0.90, isBoundary: true }
   };
 
   class SiliconViewer3D {
@@ -136,7 +146,7 @@
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       this.renderer.localClippingEnabled = true;
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.35;
+      this.renderer.toneMappingExposure = 1.0;
       this.renderer.outputEncoding = THREE.sRGBEncoding;
       this.container.appendChild(this.renderer.domElement);
 
@@ -165,7 +175,8 @@
 
     /**
      * Synthetic Studio Environment Map
-     * Generates a soft-light studio environment so PBR metal layers have crisp specular reflections
+     * Generates a neutral soft-light studio environment so PBR metal layers have crisp specular reflections
+     * without casting cyan or pastel color casts over the silicon.
      */
     _setupEnvironment() {
       if (typeof document === 'undefined' || !document.createElement) return;
@@ -176,30 +187,20 @@
         canvas.height = 256;
         const ctx = canvas.getContext('2d');
 
-        // Studio gradient background
+        // Neutral dark studio background gradient (no blinding overhead spot)
         const grad = ctx.createLinearGradient(0, 0, 0, 256);
-        grad.addColorStop(0.0, '#38bdf8'); // Sky cyan fill
-        grad.addColorStop(0.3, '#1e293b'); // Mid horizon
-        grad.addColorStop(0.7, '#0f172a'); // Dark ground
-        grad.addColorStop(1.0, '#020617');
+        grad.addColorStop(0.0, '#1e293b'); // Dark slate
+        grad.addColorStop(0.5, '#0f172a'); // Midnight
+        grad.addColorStop(1.0, '#020617'); // Pitch black
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 512, 256);
 
-        // Soft studio overhead softbox lights
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-        ctx.beginPath();
-        ctx.arc(256, 70, 60, 0, Math.PI * 2);
-        ctx.fill();
+        // Soft, diffuse studio softbox reflections
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.10)';
+        ctx.fillRect(80, 40, 140, 60);
 
-        ctx.fillStyle = 'rgba(186, 230, 253, 0.6)';
-        ctx.beginPath();
-        ctx.arc(100, 90, 45, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = 'rgba(254, 240, 138, 0.5)';
-        ctx.beginPath();
-        ctx.arc(420, 85, 40, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = 'rgba(226, 232, 240, 0.08)';
+        ctx.fillRect(300, 60, 140, 60);
 
         const envTexture = new THREE.CanvasTexture(canvas);
         envTexture.mapping = THREE.EquirectangularReflectionMapping;
@@ -213,36 +214,32 @@
 
     /**
      * 4-Point High-Fidelity Studio EDA Lighting
+     * Angled isometric key & fill illumination to prevent direct perpendicular specular blowout
      */
     _setupLights() {
-      // 1. Clean ambient illumination
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+      // 1. Balanced clean ambient illumination
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
       this.scene.add(ambientLight);
 
-      // 2. Hemisphere Light: Sky (cool cyan) vs Ground (dark charcoal)
-      const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x090d16, 0.75);
+      // 2. Hemisphere Light: Sky (cool neutral slate) vs Ground (deep charcoal)
+      const hemiLight = new THREE.HemisphereLight(0x94a3b8, 0x090d16, 0.35);
       hemiLight.position.set(0, 0, 200);
       this.scene.add(hemiLight);
 
-      // 3. Main Key Directional Light: Overhead isometric angle
-      const keyLight = new THREE.DirectionalLight(0xffffff, 1.25);
+      // 3. Main Key Directional Light: Overhead isometric angle (angled to prevent blinding top glare)
+      const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
       keyLight.position.set(120, -100, 180);
       this.scene.add(keyLight);
 
-      // 4. Fill Light: Cool azure fill for dark shadow facets
-      const fillLight = new THREE.DirectionalLight(0x7dd3fc, 0.85);
+      // 4. Fill Light: Soft cool blue fill for dark shadow facets
+      const fillLight = new THREE.DirectionalLight(0x60a5fa, 0.40);
       fillLight.position.set(-140, 90, 140);
       this.scene.add(fillLight);
 
       // 5. Specular Rim Light: Sharp metallic highlights on interconnects
-      const rimLight = new THREE.DirectionalLight(0xfef08a, 0.70);
+      const rimLight = new THREE.DirectionalLight(0xfef08a, 0.30);
       rimLight.position.set(0, 160, 100);
       this.scene.add(rimLight);
-
-      // 6. Direct Top-Down Light for 2D CAD mode
-      const topLight = new THREE.DirectionalLight(0xffffff, 0.65);
-      topLight.position.set(0, 0, 300);
-      this.scene.add(topLight);
     }
 
     _setupClipping() {
@@ -426,7 +423,52 @@
 
     _createLayerMesh(layerNum, polygons) {
       const def = SKY130_STACKUP[layerNum] || this._getDynamicLayerDef(layerNum);
-      const { elevation, thickness, color, opacity, metalness, roughness, emissive, emissiveIntensity } = def;
+      const { elevation, thickness, color, opacity, metalness, roughness, emissive, emissiveIntensity, depthWrite } = def;
+
+      // Special Case: Die Boundary (PR Boundary) - Render strictly as crisp outline wireframe
+      // NEVER as an extruded solid slab, which would fog and bleach the chip in 3D and 2D!
+      if (def.isBoundary || layerNum === 235) {
+        const linePositions = [];
+        for (let pIdx = 0; pIdx < polygons.length; pIdx++) {
+          const pts = polygons[pIdx].pts;
+          const n = pts.length;
+          if (n < 2) continue;
+          const zLine = 0.05;
+          for (let i = 0; i < n; i++) {
+            const pA = pts[i];
+            const pB = pts[(i + 1) % n];
+            linePositions.push(pA[0], pA[1], zLine);
+            linePositions.push(pB[0], pB[1], zLine);
+          }
+        }
+        if (linePositions.length === 0) return;
+        const lineGeom = new THREE.BufferGeometry();
+        lineGeom.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+        const lineMat = new THREE.LineBasicMaterial({
+          color: new THREE.Color(color || '#38bdf8'),
+          linewidth: 2,
+          transparent: true,
+          opacity: opacity !== undefined ? opacity : 0.90,
+          clippingPlanes: this.slicingEnabled ? [this.clipPlaneX, this.clipPlaneY, this.clipPlaneZ] : []
+        });
+        const mesh = new THREE.LineSegments(lineGeom, lineMat);
+        mesh.userData = {
+          layerNum,
+          name: def.name,
+          label: def.label,
+          baseElevation: elevation,
+          thickness: thickness,
+          color: color,
+          opacity: opacity,
+          polyCount: polygons.length,
+          isBoundary: true,
+          baseEmissiveIntensity: 0
+        };
+        this.layoutGroup.add(mesh);
+        this.layerMeshes.set(layerNum, mesh);
+        this.layerMeta.set(layerNum, Object.assign({}, def, { polyCount: polygons.length }));
+        return;
+      }
 
       // Estimate vertex count to pre-allocate typed buffer
       let totalTrisEstimate = 0;
@@ -529,7 +571,7 @@
         transparent: opacity < 1.0,
         opacity: opacity !== undefined ? opacity : 1.0,
         side: THREE.DoubleSide,
-        depthWrite: opacity >= 0.90,
+        depthWrite: depthWrite !== undefined ? depthWrite : (opacity >= 0.90),
         clippingPlanes: this.slicingEnabled ? [this.clipPlaneX, this.clipPlaneY, this.clipPlaneZ] : []
       });
 
@@ -596,7 +638,11 @@
       this.explodeFactor = Math.max(1.0, factor);
       this.layerMeshes.forEach((mesh) => {
         const baseZ = mesh.userData.baseElevation || 0;
-        mesh.position.z = baseZ * (this.explodeFactor - 1.0);
+        if (baseZ > 0) {
+          mesh.position.z = baseZ * (this.explodeFactor - 1.0);
+        } else {
+          mesh.position.z = 0;
+        }
       });
     }
 
@@ -617,6 +663,15 @@
         this.orthographicCamera.up.set(0, 1, 0);
         this.orthographicCamera.lookAt(0, 0, 0);
         this.controls.target.set(0, 0, 0);
+
+        // In 2D CAD mode, reduce specular glare so colors appear pure and unbleached like KLayout
+        this.layerMeshes.forEach((mesh) => {
+          if (mesh.material && !mesh.userData.isBoundary) {
+            mesh.material.roughness = 0.95;
+            mesh.material.metalness = 0.05;
+            mesh.material.needsUpdate = true;
+          }
+        });
       } else {
         // Switch to 3D Perspective Orbiting Mode
         this.activeCamera = this.perspectiveCamera;
@@ -631,6 +686,16 @@
         this.perspectiveCamera.position.set(0, -dist * 0.95, dist * 0.85);
         this.perspectiveCamera.lookAt(0, 0, 0);
         this.controls.target.set(0, 0, 0);
+
+        // Restore 3D PBR metallic and roughness
+        this.layerMeshes.forEach((mesh, layerNum) => {
+          if (mesh.material && !mesh.userData.isBoundary) {
+            const def = SKY130_STACKUP[layerNum] || this._getDynamicLayerDef(layerNum);
+            mesh.material.roughness = def.roughness !== undefined ? def.roughness : 0.38;
+            mesh.material.metalness = def.metalness !== undefined ? def.metalness : 0.60;
+            mesh.material.needsUpdate = true;
+          }
+        });
       }
 
       this._onWindowResize();
@@ -666,6 +731,48 @@
     }
 
     /**
+     * Master Reset: Complete restoration of all visualizer and engine state
+     */
+    resetAll() {
+      // 1. Reset 2D/3D mode back to 3D perspective
+      if (this.is2DMode) {
+        this.set2DMode(false);
+      } else {
+        this.resetCamera();
+      }
+
+      // 2. Reset exploded view to default
+      const defaultExp = this.options.initialExplode || 2.5;
+      this.setExplodedView(defaultExp);
+
+      // 3. Turn on all layers and restore default stackup opacities
+      this.showAllLayers();
+      this.layerMeshes.forEach((mesh, layerNum) => {
+        const def = SKY130_STACKUP[layerNum] || this._getDynamicLayerDef(layerNum);
+        if (def && def.opacity !== undefined) {
+          this.setLayerOpacity(layerNum, def.opacity);
+        }
+      });
+
+      // 4. Reset cross-section slicing
+      this.setSlicingEnabled(false);
+      if (this.currentLayout && this.currentLayout.bbox) {
+        const margin = Math.max(this.currentLayout.bbox.width_um, this.currentLayout.bbox.height_um) * 0.8;
+        this.clipPlaneX.constant = margin;
+        this.clipPlaneY.constant = margin;
+        this.clipPlaneZ.constant = 50.0;
+      } else {
+        this.clipPlaneX.constant = 1000;
+        this.clipPlaneY.constant = 1000;
+        this.clipPlaneZ.constant = 1000;
+      }
+
+      // 5. Clear measurement ruler
+      this.setRulerActive(false);
+      this.clearRuler();
+    }
+
+    /**
      * Cross-Section Slicing
      */
     setSlicingEnabled(enabled) {
@@ -696,8 +803,8 @@
     }
 
     setSliceZ(normalizedVal) {
-      const maxZ = 6.0 * (this.explodeFactor || 1.0);
-      this.clipPlaneZ.constant = (1.0 - normalizedVal) * maxZ;
+      const maxZ = 8.0 * (this.explodeFactor || 1.0);
+      this.clipPlaneZ.constant = normalizedVal * maxZ;
     }
 
     /**

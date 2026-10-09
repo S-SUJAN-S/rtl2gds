@@ -345,10 +345,57 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Reset Camera
-    btnResetCam.addEventListener('click', () => {
-      viewer.resetCamera();
-    });
+    /**
+     * Master Reset: Complete restoration of all visualizer and UI state
+     */
+    function resetAllState() {
+      if (!viewer) return;
+      
+      // 1. Reset 3D engine state (camera, 3D mode, layer visibility, default opacities, slicing, ruler)
+      viewer.resetAll();
+
+      // 2. Reset Exploded View UI
+      sliderExplode.value = 2.5;
+      labelExplodeVal.textContent = '2.5x';
+
+      // 3. Reset 2D/3D Mode Button UI
+      textMode.textContent = '2D CAD';
+      btnToggle2d3d.classList.remove('active');
+
+      // 4. Reset Layer Palette UI: Check all boxes & clear solo buttons & restore default opacity sliders
+      document.querySelectorAll('.chk-layer').forEach((c) => (c.checked = true));
+      document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.opacity-slider').forEach((slider) => {
+        const layerId = parseInt(slider.id.replace('opac-l-', ''), 10);
+        const meta = viewer.layerMeta.get(layerId);
+        if (meta && meta.opacity !== undefined) {
+          slider.value = meta.opacity;
+        } else {
+          slider.value = 1.0;
+        }
+      });
+
+      // 5. Reset Cross-Section Slicing UI
+      chkSliceEnable.checked = false;
+      sliderSliceX.value = 1.0; labelSliceX.textContent = '100%';
+      sliderSliceY.value = 1.0; labelSliceY.textContent = '100%';
+      sliderSliceZ.value = 1.0; labelSliceZ.textContent = '100%';
+      slicingPanel.classList.add('hidden');
+      btnToggleSlicing.classList.remove('active');
+
+      // 6. Reset Measurement Ruler UI
+      btnToggleRuler.classList.remove('active');
+      rulerBanner.classList.add('hidden');
+
+      // 7. Update HUD Telemetry Active Layers count
+      if (viewer.layerMeshes) {
+        const total = viewer.layerMeshes.size;
+        hudActiveLayers.textContent = `${total} / ${total}`;
+      }
+    }
+
+    // Master Reset (Camera, 3D Mode, Explode, Layers, Opacities, Slicing & Ruler)
+    btnResetCam.addEventListener('click', resetAllState);
 
     // Layer Palette Toggle
     btnToggleLayers.addEventListener('click', () => {
