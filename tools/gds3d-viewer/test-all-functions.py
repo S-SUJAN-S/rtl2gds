@@ -261,9 +261,10 @@ def test_all_functions():
         # Test 11: GLB & Snapshot Export Handlers
         # ----------------------------------------------------------------------
         print("\n[TEST 11] Testing GLB & Snapshot Exports...")
-        # Snapshot test
-        page.click("#btn-snapshot")
-        time.sleep(0.5)
+        # Snapshot test with download expectation
+        with page.expect_download():
+            page.evaluate("document.getElementById('btn-snapshot').click()")
+        print("  PASS: Snapshot PNG download triggered successfully")
 
         # GLB export test (check that it parses scene without throwing)
         page.evaluate("""
@@ -273,7 +274,7 @@ def test_all_functions():
             }, { binary: true });
         """)
         time.sleep(1.0)
-        print("  PASS: Snapshot and GLB export routines executed successfully")
+        print("  PASS: GLTFExporter scene parsing verified")
 
         # ----------------------------------------------------------------------
         # Test 12: Console Errors Audit
