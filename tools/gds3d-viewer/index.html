@@ -53,8 +53,19 @@
       <!-- Exploded View Slider -->
       <div class="slider-group" title="Z-Axis Exploded View Spacing (1.0x to 10.0x)">
         <span class="slider-label">Z-EXP</span>
-        <input type="range" id="slider-explode" min="1.0" max="10.0" step="0.1" value="2.5">
-        <span id="label-explode-val" class="slider-val">2.5x</span>
+        <input type="range" id="slider-explode" min="1.0" max="10.0" step="0.1" value="1.0">
+        <span id="label-explode-val" class="slider-val">1.0x (Real)</span>
+      </div>
+
+      <!-- Camera Angle Presets -->
+      <div class="select-wrapper camera-angles" title="Camera View Angle Presets: 3D Isometric, Top, Front, Side, Macro">
+        <select id="select-camera-angle">
+          <option value="iso">3D Isometric (45°)</option>
+          <option value="top">Top View (90°)</option>
+          <option value="front">Front Cross-Section (XZ)</option>
+          <option value="side">Side Cross-Section (YZ)</option>
+          <option value="macro">Transistor Zoom</option>
+        </select>
       </div>
 
       <!-- View & Tool Buttons -->
@@ -130,6 +141,7 @@
       <button id="btn-all-layers-on" class="quick-btn">All On</button>
       <button id="btn-all-layers-off" class="quick-btn">All Off</button>
       <button id="btn-metals-only" class="quick-btn">Metals</button>
+      <button id="btn-vias-only" class="quick-btn">Vias</button>
       <button id="btn-frontend-only" class="quick-btn">Front-End</button>
     </div>
 

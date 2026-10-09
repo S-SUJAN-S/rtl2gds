@@ -462,11 +462,15 @@
           ];
         }
 
-        const lNum = poly.layer;
-        if (!layersMap.has(lNum)) {
-          layersMap.set(lNum, []);
+        // Key by canonical layer/datatype if datatype is present and non-zero, else layer
+        const layerKey = (poly.datatype !== undefined && poly.datatype !== 0) ?
+          `${poly.layer}/${poly.datatype}` : `${poly.layer}`;
+
+        if (!layersMap.has(layerKey)) {
+          layersMap.set(layerKey, []);
         }
-        layersMap.get(lNum).push({
+        layersMap.get(layerKey).push({
+          layer: poly.layer,
           datatype: poly.datatype,
           pts: normPts
         });
@@ -474,10 +478,16 @@
 
       // Convert map to sorted object
       const layersObj = {};
-      const layerKeys = Array.from(layersMap.keys()).sort((a, b) => a - b);
+      const layerKeys = Array.from(layersMap.keys()).sort((a, b) => {
+        const partsA = String(a).split('/').map(Number);
+        const partsB = String(b).split('/').map(Number);
+        const lA = partsA[0] || 0, dA = partsA[1] || 0;
+        const lB = partsB[0] || 0, dB = partsB[1] || 0;
+        return lA !== lB ? lA - lB : dA - dB;
+      });
       for (let k = 0; k < layerKeys.length; k++) {
-        const lNum = layerKeys[k];
-        layersObj[lNum] = layersMap.get(lNum);
+        const key = layerKeys[k];
+        layersObj[key] = layersMap.get(key);
       }
 
       return {

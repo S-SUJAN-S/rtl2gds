@@ -31,9 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const layerList = document.getElementById('layer-list');
   const badgeLayerCount = document.getElementById('badge-layer-count');
 
+  const selectCameraAngle = document.getElementById('select-camera-angle');
   const btnAllLayersOn = document.getElementById('btn-all-layers-on');
   const btnAllLayersOff = document.getElementById('btn-all-layers-off');
   const btnMetalsOnly = document.getElementById('btn-metals-only');
+  const btnViasOnly = document.getElementById('btn-vias-only');
   const btnFrontendOnly = document.getElementById('btn-frontend-only');
 
   const btnToggleSlicing = document.getElementById('btn-toggle-slicing');
@@ -94,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function initViewer() {
     viewer = new SiliconViewer3D(viewportContainer, {
-      initialExplode: parseFloat(sliderExplode.value) || 2.5
+      initialExplode: parseFloat(sliderExplode.value) || 1.0
     });
     window.viewer = viewer;
 
@@ -203,11 +205,19 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   function buildLayerPalette(layoutData) {
     layerList.innerHTML = '';
-    const layerIds = Object.keys(layoutData.layers).map(Number).sort((a, b) => a - b);
+    const layerIds = Object.keys(layoutData.layers).sort((a, b) => {
+      const partsA = String(a).split('/').map(Number);
+      const partsB = String(b).split('/').map(Number);
+      const lA = partsA[0] || 0, dA = partsA[1] || 0;
+      const lB = partsB[0] || 0, dB = partsB[1] || 0;
+      return lA !== lB ? lA - lB : dA - dB;
+    });
 
     layerIds.forEach((layerNum) => {
       const meta = viewer.layerMeta.get(layerNum);
       if (!meta) return;
+
+      const idSafe = String(layerNum).replace(/[^a-zA-Z0-9_-]/g, '_');
 
       const card = document.createElement('div');
       card.className = 'layer-item';
@@ -216,25 +226,25 @@ document.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <div class="layer-item-row">
           <div class="layer-left">
-            <input type="checkbox" class="chk-layer" id="chk-l-${layerNum}" checked title="Toggle layer visibility">
+            <input type="checkbox" class="chk-layer" id="chk-l-${idSafe}" checked title="Toggle layer visibility">
             <div class="layer-swatch" style="background-color: ${meta.color};"></div>
             <div class="layer-info">
               <span class="layer-title">${meta.label || meta.name}</span>
-              <span class="layer-sub">L${layerNum} • Elev: ${meta.elevation.toFixed(2)}µm</span>
+              <span class="layer-sub">${meta.isPin ? 'Pin Port Wireframe' : ('Elev: ' + meta.elevation.toFixed(2) + 'µm')}</span>
             </div>
           </div>
           <div class="layer-right">
             <span class="poly-badge">${meta.polyCount.toLocaleString()}</span>
-            <button class="solo-btn" id="solo-l-${layerNum}" title="Solo this layer">S</button>
+            <button class="solo-btn" id="solo-l-${idSafe}" title="Solo this layer">S</button>
           </div>
         </div>
         <div class="opacity-slider-row">
-          <input type="range" class="opacity-slider" id="opac-l-${layerNum}" min="0.0" max="1.0" step="0.05" value="${meta.opacity !== undefined ? meta.opacity : 1.0}" title="Layer opacity">
+          <input type="range" class="opacity-slider" id="opac-l-${idSafe}" min="0.0" max="1.0" step="0.05" value="${meta.opacity !== undefined ? meta.opacity : 1.0}" title="Layer opacity">
         </div>
       `;
 
       // Checkbox visibility
-      const chk = card.querySelector(`#chk-l-${layerNum}`);
+      const chk = card.querySelector(`#chk-l-${idSafe}`);
       chk.addEventListener('change', (e) => {
         viewer.setLayerVisibility(layerNum, e.target.checked);
       });
@@ -248,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // Solo button
-      const soloBtn = card.querySelector(`#solo-l-${layerNum}`);
+      const soloBtn = card.querySelector(`#solo-l-${idSafe}`);
       soloBtn.addEventListener('click', () => {
         const wasSolo = soloBtn.classList.contains('active');
         document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
@@ -260,13 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
           soloBtn.classList.add('active');
           viewer.soloLayer(layerNum);
           document.querySelectorAll('.chk-layer').forEach((c) => {
-            c.checked = (c.id === `chk-l-${layerNum}`);
+            const cCard = c.closest('.layer-item');
+            c.checked = (cCard && cCard.dataset.layerId === String(layerNum));
           });
         }
       });
 
       // Opacity slider
-      const opacSlider = card.querySelector(`#opac-l-${layerNum}`);
+      const opacSlider = card.querySelector(`#opac-l-${idSafe}`);
       opacSlider.addEventListener('input', (e) => {
         viewer.setLayerOpacity(layerNum, parseFloat(e.target.value));
       });
@@ -329,9 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Exploded View Slider
     sliderExplode.addEventListener('input', (e) => {
       const val = parseFloat(e.target.value);
-      labelExplodeVal.textContent = `${val.toFixed(1)}x`;
+      labelExplodeVal.textContent = (val === 1.0) ? '1.0x (Real)' : `${val.toFixed(1)}x`;
       viewer.setExplodedView(val);
     });
+
+    // Camera Angle Preset Selector ("All Angles")
+    if (selectCameraAngle) {
+      selectCameraAngle.addEventListener('change', (e) => {
+        viewer.setCameraAngle(e.target.value);
+      });
+    }
 
     // 2D / 3D Mode Toggle
     btnToggle2d3d.addEventListener('click', () => {
@@ -355,19 +373,25 @@ document.addEventListener('DOMContentLoaded', () => {
       viewer.resetAll();
 
       // 2. Reset Exploded View UI
-      sliderExplode.value = 2.5;
-      labelExplodeVal.textContent = '2.5x';
+      sliderExplode.value = 1.0;
+      labelExplodeVal.textContent = '1.0x (Real)';
 
-      // 3. Reset 2D/3D Mode Button UI
+      // 3. Reset Camera Angle Preset Dropdown UI
+      if (selectCameraAngle) {
+        selectCameraAngle.value = 'iso';
+      }
+
+      // 4. Reset 2D/3D Mode Button UI
       textMode.textContent = '2D CAD';
       btnToggle2d3d.classList.remove('active');
 
-      // 4. Reset Layer Palette UI: Check all boxes & clear solo buttons & restore default opacity sliders
+      // 5. Reset Layer Palette UI: Check all boxes & clear solo buttons & restore default opacity sliders
       document.querySelectorAll('.chk-layer').forEach((c) => (c.checked = true));
       document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
       document.querySelectorAll('.opacity-slider').forEach((slider) => {
-        const layerId = parseInt(slider.id.replace('opac-l-', ''), 10);
-        const meta = viewer.layerMeta.get(layerId);
+        const layerCard = slider.closest('.layer-item');
+        const layerId = layerCard ? layerCard.dataset.layerId : null;
+        const meta = layerId ? viewer.layerMeta.get(layerId) : null;
         if (meta && meta.opacity !== undefined) {
           slider.value = meta.opacity;
         } else {
@@ -375,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // 5. Reset Cross-Section Slicing UI
+      // 6. Reset Cross-Section Slicing UI
       chkSliceEnable.checked = false;
       sliderSliceX.value = 1.0; labelSliceX.textContent = '100%';
       sliderSliceY.value = 1.0; labelSliceY.textContent = '100%';
@@ -383,11 +407,11 @@ document.addEventListener('DOMContentLoaded', () => {
       slicingPanel.classList.add('hidden');
       btnToggleSlicing.classList.remove('active');
 
-      // 6. Reset Measurement Ruler UI
+      // 7. Reset Measurement Ruler UI
       btnToggleRuler.classList.remove('active');
       rulerBanner.classList.add('hidden');
 
-      // 7. Update HUD Telemetry Active Layers count
+      // 8. Update HUD Telemetry Active Layers count
       if (viewer.layerMeshes) {
         const total = viewer.layerMeshes.size;
         hudActiveLayers.textContent = `${total} / ${total}`;
@@ -418,20 +442,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnMetalsOnly.addEventListener('click', () => {
       viewer.isolateMetalsOnly();
-      const metalIds = new Set([68, 69, 70, 71, 72, 94, 95, 122]);
       document.querySelectorAll('.chk-layer').forEach((c) => {
-        const id = parseInt(c.id.replace('chk-l-', ''), 10);
-        c.checked = metalIds.has(id);
+        const card = c.closest('.layer-item');
+        const layerId = card ? card.dataset.layerId : null;
+        const mesh = layerId ? viewer.layerMeshes.get(layerId) : null;
+        c.checked = mesh ? mesh.visible : false;
       });
       document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
     });
 
+    if (btnViasOnly) {
+      btnViasOnly.addEventListener('click', () => {
+        viewer.isolateViasOnly();
+        document.querySelectorAll('.chk-layer').forEach((c) => {
+          const card = c.closest('.layer-item');
+          const layerId = card ? card.dataset.layerId : null;
+          const mesh = layerId ? viewer.layerMeshes.get(layerId) : null;
+          c.checked = mesh ? mesh.visible : false;
+        });
+        document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
+      });
+    }
+
     btnFrontendOnly.addEventListener('click', () => {
       viewer.isolateFrontEndOnly();
-      const feIds = new Set([64, 65, 66, 67, 78, 81, 83, 93]);
       document.querySelectorAll('.chk-layer').forEach((c) => {
-        const id = parseInt(c.id.replace('chk-l-', ''), 10);
-        c.checked = feIds.has(id);
+        const card = c.closest('.layer-item');
+        const layerId = card ? card.dataset.layerId : null;
+        const mesh = layerId ? viewer.layerMeshes.get(layerId) : null;
+        c.checked = mesh ? mesh.visible : false;
       });
       document.querySelectorAll('.solo-btn').forEach((b) => b.classList.remove('active'));
     });

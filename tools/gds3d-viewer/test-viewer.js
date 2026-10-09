@@ -69,7 +69,7 @@ function runTests() {
 
     // Verify Three.js geometry construction for each layer
     let totalGeomVertices = 0;
-    const layerIds = Object.keys(layout.layers).map(Number);
+    const layerIds = Object.keys(layout.layers);
     for (const lNum of layerIds) {
       const polys = layout.layers[lNum];
       let triEstimate = 0;
