@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     viewer = new SiliconViewer3D(viewportContainer, {
       initialExplode: parseFloat(sliderExplode.value) || 2.5
     });
+    window.viewer = viewer;
 
     // Telemetry & Cursor Coordinate Callback
     viewer.onTelemetryUpdate = (data) => {
@@ -236,6 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const chk = card.querySelector(`#chk-l-${layerNum}`);
       chk.addEventListener('change', (e) => {
         viewer.setLayerVisibility(layerNum, e.target.checked);
+      });
+
+      // Layer card hover highlight
+      card.addEventListener('mouseenter', () => {
+        viewer.highlightLayer(layerNum, true);
+      });
+      card.addEventListener('mouseleave', () => {
+        viewer.highlightLayer(layerNum, false);
       });
 
       // Solo button

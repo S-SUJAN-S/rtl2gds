@@ -1,6 +1,6 @@
 /**
  * Silicon3D: Interactive 3D GDSII Silicon Layout Visualizer
- * Three.js 3D Silicon Extrusion, Exploded View, & CAD Rendering Engine
+ * Three.js 3D Silicon Extrusion, Exploded View, PBR Studio Lighting & CAD Engine
  * 
  * Author: Sujan S (@S-SUJAN-S) — Independent Hardware AI & Autonomous EDA Researcher
  * License: Apache 2.0 / MIT
@@ -18,25 +18,26 @@
   'use strict';
 
   // SkyWater 130nm Physical Metallization & Diffusion Stackup
+  // Calibrated with PBR metallic, roughness, and subtle luminescence for crisp CAD rendering
   const SKY130_STACKUP = {
-    64:  { name: 'nwell',       label: 'N-Well',                  color: '#06b6d4', elevation: 0.00, thickness: 0.20, opacity: 0.35, metalness: 0.0, roughness: 0.85 },
-    65:  { name: 'diff',        label: 'Diffusion / Active',       color: '#10b981', elevation: 0.20, thickness: 0.15, opacity: 0.85, metalness: 0.1, roughness: 0.60 },
-    66:  { name: 'poly',        label: 'Polysilicon Gate',        color: '#ef4444', elevation: 0.35, thickness: 0.18, opacity: 0.90, metalness: 0.2, roughness: 0.50 },
-    67:  { name: 'li1',         label: 'Local Interconnect (li1)',color: '#0284c7', elevation: 0.55, thickness: 0.15, opacity: 0.95, metalness: 0.85, roughness: 0.30 },
-    68:  { name: 'm1',          label: 'Metal 1 (m1)',            color: '#3b82f6', elevation: 0.85, thickness: 0.35, opacity: 1.00, metalness: 0.90, roughness: 0.20 },
-    69:  { name: 'm2',          label: 'Metal 2 (m2)',            color: '#f59e0b', elevation: 1.45, thickness: 0.35, opacity: 1.00, metalness: 0.90, roughness: 0.20 },
-    70:  { name: 'm3',          label: 'Metal 3 (m3)',            color: '#059669', elevation: 2.10, thickness: 0.80, opacity: 1.00, metalness: 0.90, roughness: 0.20 },
-    71:  { name: 'm4',          label: 'Metal 4 (m4)',            color: '#8b5cf6', elevation: 3.20, thickness: 0.80, opacity: 1.00, metalness: 0.90, roughness: 0.20 },
-    72:  { name: 'm5',          label: 'Metal 5 (m5)',            color: '#eab308', elevation: 4.30, thickness: 1.20, opacity: 1.00, metalness: 0.95, roughness: 0.15 },
-    78:  { name: 'tap',         label: 'Substrate Tap',           color: '#ec4899', elevation: 0.20, thickness: 0.15, opacity: 0.70, metalness: 0.0, roughness: 0.60 },
-    81:  { name: 'nsdm',        label: 'N+ Source/Drain',         color: '#a855f7', elevation: 0.10, thickness: 0.10, opacity: 0.40, metalness: 0.0, roughness: 0.70 },
-    83:  { name: 'psdm',        label: 'P+ Source/Drain',         color: '#6366f1', elevation: 0.10, thickness: 0.10, opacity: 0.40, metalness: 0.0, roughness: 0.70 },
-    93:  { name: 'hvi',         label: 'High Voltage Imp.',       color: '#14b8a6', elevation: 0.05, thickness: 0.08, opacity: 0.30, metalness: 0.0, roughness: 0.70 },
-    94:  { name: 'licon',       label: 'LI Contact (licon)',      color: '#00d2d3', elevation: 0.50, thickness: 0.12, opacity: 0.90, metalness: 0.8, roughness: 0.35 },
-    95:  { name: 'mcon',        label: 'M1 Contact (mcon)',       color: '#38bdf8', elevation: 0.70, thickness: 0.15, opacity: 0.90, metalness: 0.8, roughness: 0.35 },
-    122: { name: 'pad',         label: 'Bonding Pad',             color: '#f97316', elevation: 4.30, thickness: 1.20, opacity: 0.90, metalness: 0.90, roughness: 0.20 },
-    235: { name: 'prBoundary',  label: 'PR / Die Boundary',       color: '#22d3ee', elevation: -0.02, thickness: 0.02, opacity: 0.50, metalness: 0.0, roughness: 0.90, isBoundary: true },
-    236: { name: 'fill',        label: 'Fill / Core Margin',      color: '#64748b', elevation: 0.00, thickness: 0.05, opacity: 0.25, metalness: 0.0, roughness: 0.90 }
+    64:  { name: 'nwell',       label: 'N-Well (L64)',            color: '#06b6d4', elevation: 0.00, thickness: 0.20, opacity: 0.22, metalness: 0.1, roughness: 0.85, emissive: '#0891b2', emissiveIntensity: 0.08 },
+    65:  { name: 'diff',        label: 'Diffusion / Active (L65)',color: '#10b981', elevation: 0.20, thickness: 0.18, opacity: 0.85, metalness: 0.2, roughness: 0.45, emissive: '#059669', emissiveIntensity: 0.15 },
+    66:  { name: 'poly',        label: 'Polysilicon Gate (L66)',  color: '#ef4444', elevation: 0.40, thickness: 0.20, opacity: 0.95, metalness: 0.3, roughness: 0.35, emissive: '#dc2626', emissiveIntensity: 0.20 },
+    67:  { name: 'li1',         label: 'Local Interconnect (L67)',color: '#0284c7', elevation: 0.65, thickness: 0.18, opacity: 0.95, metalness: 0.6, roughness: 0.28, emissive: '#0284c7', emissiveIntensity: 0.20 },
+    68:  { name: 'm1',          label: 'Metal 1 (L68)',           color: '#38bdf8', elevation: 0.95, thickness: 0.35, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#0284c7', emissiveIntensity: 0.22 },
+    69:  { name: 'm2',          label: 'Metal 2 (L69)',           color: '#f59e0b', elevation: 1.55, thickness: 0.35, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#d97706', emissiveIntensity: 0.22 },
+    70:  { name: 'm3',          label: 'Metal 3 (L70)',           color: '#34d399', elevation: 2.20, thickness: 0.80, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#059669', emissiveIntensity: 0.22 },
+    71:  { name: 'm4',          label: 'Metal 4 (L71)',           color: '#c084fc', elevation: 3.35, thickness: 0.80, opacity: 1.00, metalness: 0.65, roughness: 0.22, emissive: '#9333ea', emissiveIntensity: 0.22 },
+    72:  { name: 'm5',          label: 'Metal 5 (L72)',           color: '#facc15', elevation: 4.50, thickness: 1.20, opacity: 1.00, metalness: 0.70, roughness: 0.18, emissive: '#ca8a04', emissiveIntensity: 0.25 },
+    78:  { name: 'tap',         label: 'Substrate Tap (L78)',     color: '#ec4899', elevation: 0.20, thickness: 0.18, opacity: 0.80, metalness: 0.2, roughness: 0.50, emissive: '#db2777', emissiveIntensity: 0.15 },
+    81:  { name: 'nsdm',        label: 'N+ Source/Drain (L81)',   color: '#a855f7', elevation: 0.10, thickness: 0.10, opacity: 0.35, metalness: 0.1, roughness: 0.70, emissive: '#7e22ce', emissiveIntensity: 0.10 },
+    83:  { name: 'psdm',        label: 'P+ Source/Drain (L83)',   color: '#6366f1', elevation: 0.10, thickness: 0.10, opacity: 0.35, metalness: 0.1, roughness: 0.70, emissive: '#4f46e5', emissiveIntensity: 0.10 },
+    93:  { name: 'hvi',         label: 'High Voltage Imp. (L93)', color: '#14b8a6', elevation: 0.05, thickness: 0.08, opacity: 0.30, metalness: 0.1, roughness: 0.70, emissive: '#0d9488', emissiveIntensity: 0.10 },
+    94:  { name: 'licon',       label: 'LI Contact (L94)',        color: '#22d3ee', elevation: 0.60, thickness: 0.15, opacity: 0.95, metalness: 0.7, roughness: 0.25, emissive: '#06b6d4', emissiveIntensity: 0.25 },
+    95:  { name: 'mcon',        label: 'M1 Contact (L95)',        color: '#60a5fa', elevation: 0.80, thickness: 0.15, opacity: 0.95, metalness: 0.7, roughness: 0.25, emissive: '#2563eb', emissiveIntensity: 0.25 },
+    122: { name: 'pad',         label: 'Bonding Pad (L122)',      color: '#fb923c', elevation: 4.50, thickness: 1.20, opacity: 0.95, metalness: 0.75, roughness: 0.20, emissive: '#ea580c', emissiveIntensity: 0.25 },
+    235: { name: 'prBoundary',  label: 'PR / Die Boundary (L235)',color: '#22d3ee', elevation: -0.02, thickness: 0.02, opacity: 0.60, metalness: 0.1, roughness: 0.90, isBoundary: true, emissive: '#06b6d4', emissiveIntensity: 0.30 },
+    236: { name: 'fill',        label: 'Fill / Core Margin (L236)',color: '#64748b', elevation: 0.00, thickness: 0.05, opacity: 0.30, metalness: 0.2, roughness: 0.85, emissive: '#475569', emissiveIntensity: 0.10 }
   };
 
   class SiliconViewer3D {
@@ -87,6 +88,7 @@
       this.onTelemetryUpdate = null;
 
       this._initThree();
+      this._setupEnvironment();
       this._setupLights();
       this._setupClipping();
       this._setupEvents();
@@ -99,13 +101,14 @@
 
       // 1. Scene
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(0x0a0d14); // Deep cyber dark
-      this.scene.fog = new THREE.FogExp2(0x0a0d14, 0.0008);
+      this.scene.background = new THREE.Color(0x060910); // Rich deep midnight background
+      this.scene.fog = new THREE.FogExp2(0x060910, 0.0004);
 
       // 2. Cameras
       const aspect = width / height;
-      this.perspectiveCamera = new THREE.PerspectiveCamera(45, aspect, 0.1, 10000);
-      this.perspectiveCamera.position.set(0, -120, 100);
+      this.perspectiveCamera = new THREE.PerspectiveCamera(40, aspect, 0.1, 10000);
+      this.perspectiveCamera.position.set(0, -110, 95);
+      this.perspectiveCamera.up.set(0, 0, 1); // Z is vertical in 3D silicon stackup!
 
       const frustumSize = 150;
       this.orthographicCamera = new THREE.OrthographicCamera(
@@ -117,6 +120,7 @@
         10000
       );
       this.orthographicCamera.position.set(0, 0, 500);
+      this.orthographicCamera.up.set(0, 1, 0); // Y is up in 2D top-down view
       this.orthographicCamera.lookAt(0, 0, 0);
 
       this.activeCamera = this.perspectiveCamera;
@@ -132,16 +136,18 @@
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       this.renderer.localClippingEnabled = true;
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.15;
+      this.renderer.toneMappingExposure = 1.35;
+      this.renderer.outputEncoding = THREE.sRGBEncoding;
       this.container.appendChild(this.renderer.domElement);
 
       // 4. OrbitControls
       this.controls = new THREE.OrbitControls(this.activeCamera, this.renderer.domElement);
       this.controls.enableDamping = true;
-      this.controls.dampingFactor = 0.08;
+      this.controls.dampingFactor = 0.07;
       this.controls.screenSpacePanning = true;
-      this.controls.maxDistance = 3000;
+      this.controls.maxDistance = 2500;
       this.controls.minDistance = 2;
+      this.controls.target.set(0, 0, 0);
 
       // 5. Container groups
       this.layoutGroup = new THREE.Group();
@@ -152,30 +158,91 @@
       this.scene.add(this.layoutGroup);
       this.scene.add(this.rulerGroup);
 
-      // Raycaster for cursor telemetry and measurement ruler
+      // Raycaster for cursor telemetry and ruler tool
       this.raycaster = new THREE.Raycaster();
       this.mouse = new THREE.Vector2();
     }
 
+    /**
+     * Synthetic Studio Environment Map
+     * Generates a soft-light studio environment so PBR metal layers have crisp specular reflections
+     */
+    _setupEnvironment() {
+      if (typeof document === 'undefined' || !document.createElement) return;
+
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 256;
+        const ctx = canvas.getContext('2d');
+
+        // Studio gradient background
+        const grad = ctx.createLinearGradient(0, 0, 0, 256);
+        grad.addColorStop(0.0, '#38bdf8'); // Sky cyan fill
+        grad.addColorStop(0.3, '#1e293b'); // Mid horizon
+        grad.addColorStop(0.7, '#0f172a'); // Dark ground
+        grad.addColorStop(1.0, '#020617');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 512, 256);
+
+        // Soft studio overhead softbox lights
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.beginPath();
+        ctx.arc(256, 70, 60, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.6)';
+        ctx.beginPath();
+        ctx.arc(100, 90, 45, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(254, 240, 138, 0.5)';
+        ctx.beginPath();
+        ctx.arc(420, 85, 40, 0, Math.PI * 2);
+        ctx.fill();
+
+        const envTexture = new THREE.CanvasTexture(canvas);
+        envTexture.mapping = THREE.EquirectangularReflectionMapping;
+        envTexture.encoding = THREE.sRGBEncoding;
+
+        this.scene.environment = envTexture;
+      } catch (err) {
+        console.warn('Synthetic envMap skipped:', err);
+      }
+    }
+
+    /**
+     * 4-Point High-Fidelity Studio EDA Lighting
+     */
     _setupLights() {
-      // Balanced EDA ambient illumination
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      // 1. Clean ambient illumination
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
       this.scene.add(ambientLight);
 
-      // Key light for crisp metallic wire highlights
-      const keyLight = new THREE.DirectionalLight(0xffffff, 0.85);
-      keyLight.position.set(150, 100, 250);
+      // 2. Hemisphere Light: Sky (cool cyan) vs Ground (dark charcoal)
+      const hemiLight = new THREE.HemisphereLight(0xe0f2fe, 0x090d16, 0.75);
+      hemiLight.position.set(0, 0, 200);
+      this.scene.add(hemiLight);
+
+      // 3. Main Key Directional Light: Overhead isometric angle
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.25);
+      keyLight.position.set(120, -100, 180);
       this.scene.add(keyLight);
 
-      // Fill light for soft shadow filling
-      const fillLight = new THREE.DirectionalLight(0x60a5fa, 0.45);
-      fillLight.position.set(-150, -120, 150);
+      // 4. Fill Light: Cool azure fill for dark shadow facets
+      const fillLight = new THREE.DirectionalLight(0x7dd3fc, 0.85);
+      fillLight.position.set(-140, 90, 140);
       this.scene.add(fillLight);
 
-      // Rim light for edge bevel and silicon layering
-      const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.35);
-      rimLight.position.set(0, 200, -50);
+      // 5. Specular Rim Light: Sharp metallic highlights on interconnects
+      const rimLight = new THREE.DirectionalLight(0xfef08a, 0.70);
+      rimLight.position.set(0, 160, 100);
       this.scene.add(rimLight);
+
+      // 6. Direct Top-Down Light for 2D CAD mode
+      const topLight = new THREE.DirectionalLight(0xffffff, 0.65);
+      topLight.position.set(0, 0, 300);
+      this.scene.add(topLight);
     }
 
     _setupClipping() {
@@ -188,7 +255,7 @@
     _setupEvents() {
       window.addEventListener('resize', this._onWindowResize.bind(this));
 
-      // Pointer tracking for HUD cursor coords and ruler
+      // Pointer tracking for HUD cursor coords and ruler tool
       this.renderer.domElement.addEventListener('pointermove', this._onPointerMove.bind(this));
       this.renderer.domElement.addEventListener('pointerdown', this._onPointerDown.bind(this));
     }
@@ -203,7 +270,7 @@
       this.perspectiveCamera.updateProjectionMatrix();
 
       const frustumSize = (this.currentLayout && this.currentLayout.bbox) ?
-        Math.max(this.currentLayout.bbox.width_um, this.currentLayout.bbox.height_um) * 1.5 : 150;
+        Math.max(this.currentLayout.bbox.width_um, this.currentLayout.bbox.height_um) * 1.35 : 150;
       this.orthographicCamera.left = (-frustumSize * aspect) / 2;
       this.orthographicCamera.right = (frustumSize * aspect) / 2;
       this.orthographicCamera.top = frustumSize / 2;
@@ -253,10 +320,10 @@
 
       if (this.rulerPoints.length === 0) {
         this.rulerPoints.push(pt.clone());
-        this._renderRulerMarker(pt, 0x00ffff);
+        this._renderRulerMarker(pt, 0x22d3ee);
       } else if (this.rulerPoints.length === 1) {
         this.rulerPoints.push(pt.clone());
-        this._renderRulerMarker(pt, 0xff007f);
+        this._renderRulerMarker(pt, 0xf43f5e);
         this._finalizeRulerLine();
       }
     }
@@ -299,7 +366,7 @@
         this._createLayerMesh(layerNum, polys);
       }
 
-      // 3. Set camera to frame the chip nicely
+      // 3. Reset camera to frame the chip
       this.resetCamera();
 
       // 4. Apply initial exploded view elevation
@@ -314,31 +381,31 @@
 
     _createSubstrateWafer(width, height) {
       // Substrate wafer base plate
-      const waferW = Math.max(width * 1.35, width + 20);
-      const waferH = Math.max(height * 1.35, height + 20);
-      const waferThickness = 2.0;
+      const waferW = Math.max(width * 1.35, width + 25);
+      const waferH = Math.max(height * 1.35, height + 25);
+      const waferThickness = 2.5;
 
       const waferGeom = new THREE.BoxGeometry(waferW, waferH, waferThickness);
       const waferMat = new THREE.MeshStandardMaterial({
-        color: 0x111622,
-        metalness: 0.3,
-        roughness: 0.85,
+        color: 0x0c101a, // Silicon dark wafer
+        metalness: 0.45,
+        roughness: 0.65,
         clippingPlanes: this.slicingEnabled ? [this.clipPlaneX, this.clipPlaneY, this.clipPlaneZ] : []
       });
       const waferMesh = new THREE.Mesh(waferGeom, waferMat);
       waferMesh.position.set(0, 0, -waferThickness / 2 - 0.05);
       this.substrateGroup.add(waferMesh);
 
-      // Glowing die boundary frame
-      const borderGeom = new THREE.BufferGeometry();
+      // Chamfered die perimeter bevel frame
       const halfW = width / 2;
       const halfH = height / 2;
+      const borderGeom = new THREE.BufferGeometry();
       const borderVerts = new Float32Array([
-        -halfW, -halfH, 0.01,
-         halfW, -halfH, 0.01,
-         halfW,  halfH, 0.01,
-        -halfW,  halfH, 0.01,
-        -halfW, -halfH, 0.01
+        -halfW, -halfH, 0.02,
+         halfW, -halfH, 0.02,
+         halfW,  halfH, 0.02,
+        -halfW,  halfH, 0.02,
+        -halfW, -halfH, 0.02
       ]);
       borderGeom.setAttribute('position', new THREE.BufferAttribute(borderVerts, 3));
       const borderMat = new THREE.LineBasicMaterial({
@@ -350,8 +417,8 @@
       const borderLine = new THREE.Line(borderGeom, borderMat);
       this.substrateGroup.add(borderLine);
 
-      // Substrate grid gridlines
-      const grid = new THREE.GridHelper(Math.max(waferW, waferH), 20, 0x1e293b, 0x0f172a);
+      // Substrate gridlines
+      const grid = new THREE.GridHelper(Math.max(waferW, waferH), 24, 0x1e293b, 0x0f172a);
       grid.rotation.x = Math.PI / 2;
       grid.position.z = -0.01;
       this.substrateGroup.add(grid);
@@ -359,7 +426,7 @@
 
     _createLayerMesh(layerNum, polygons) {
       const def = SKY130_STACKUP[layerNum] || this._getDynamicLayerDef(layerNum);
-      const { elevation, thickness, color, opacity, metalness, roughness } = def;
+      const { elevation, thickness, color, opacity, metalness, roughness, emissive, emissiveIntensity } = def;
 
       // Estimate vertex count to pre-allocate typed buffer
       let totalTrisEstimate = 0;
@@ -392,13 +459,13 @@
           // Fast-path optimized rectangle (90%+ of ASIC standard cells)
           const p0 = pts[0], p1 = pts[1], p2 = pts[2], p3 = pts[3];
 
-          // 1. Top Face (2 triangles: p0,p1,p2 and p0,p2,p3)
+          // 1. Top Face
           this._addTriangle(positions, normals, vOffset, p0[0], p0[1], z1, p1[0], p1[1], z1, p2[0], p2[1], z1, 0, 0, 1);
           vOffset += 9;
           this._addTriangle(positions, normals, vOffset, p0[0], p0[1], z1, p2[0], p2[1], z1, p3[0], p3[1], z1, 0, 0, 1);
           vOffset += 9;
 
-          // 2. Bottom Face (2 triangles: p0,p2,p1 and p0,p3,p2)
+          // 2. Bottom Face
           this._addTriangle(positions, normals, vOffset, p0[0], p0[1], z0, p2[0], p2[1], z0, p1[0], p1[1], z0, 0, 0, -1);
           vOffset += 9;
           this._addTriangle(positions, normals, vOffset, p0[0], p0[1], z0, p3[0], p3[1], z0, p2[0], p2[1], z0, 0, 0, -1);
@@ -420,13 +487,11 @@
             }
             indices = earcutFn(flat, null, 2);
           } else {
-            // Simple fan fallback
             indices = [];
             for (let i = 1; i < n - 1; i++) indices.push(0, i, i + 1);
           }
 
           if (indices && indices.length >= 3) {
-            // Top and Bottom caps
             for (let t = 0; t < indices.length; t += 3) {
               const i0 = indices[t], i1 = indices[t + 1], i2 = indices[t + 2];
               // Top
@@ -454,15 +519,17 @@
       geometry.setAttribute('position', new THREE.BufferAttribute(positions.subarray(0, vOffset), 3));
       geometry.setAttribute('normal', new THREE.BufferAttribute(normals.subarray(0, vOffset), 3));
 
-      // Silicon PBR material
+      // Enhanced PBR Silicon Material with subtle luminescence
       const material = new THREE.MeshStandardMaterial({
         color: new THREE.Color(color),
-        metalness: metalness !== undefined ? metalness : 0.5,
-        roughness: roughness !== undefined ? roughness : 0.4,
+        metalness: metalness !== undefined ? metalness : 0.45,
+        roughness: roughness !== undefined ? roughness : 0.35,
+        emissive: new THREE.Color(emissive || color),
+        emissiveIntensity: emissiveIntensity !== undefined ? emissiveIntensity : 0.15,
         transparent: opacity < 1.0,
         opacity: opacity !== undefined ? opacity : 1.0,
         side: THREE.DoubleSide,
-        depthWrite: opacity >= 0.95,
+        depthWrite: opacity >= 0.90,
         clippingPlanes: this.slicingEnabled ? [this.clipPlaneX, this.clipPlaneY, this.clipPlaneZ] : []
       });
 
@@ -475,7 +542,8 @@
         thickness: thickness,
         color: color,
         opacity: opacity,
-        polyCount: polygons.length
+        polyCount: polygons.length,
+        baseEmissiveIntensity: emissiveIntensity || 0.15
       };
 
       this.layoutGroup.add(mesh);
@@ -494,30 +562,30 @@
     }
 
     _addWallQuad(pos, norm, offset, x0, y0, x1, y1, z0, z1) {
-      // Normal vector pointing outwards from wall
       const dx = x1 - x0;
       const dy = y1 - y0;
       const len = Math.hypot(dx, dy) || 1e-5;
       const nx = dy / len;
       const ny = -dx / len;
 
-      // Triangle 1: (p0,z0), (p1,z0), (p1,z1)
       this._addTriangle(pos, norm, offset, x0, y0, z0, x1, y1, z0, x1, y1, z1, nx, ny, 0);
-      // Triangle 2: (p0,z0), (p1,z1), (p0,z1)
       this._addTriangle(pos, norm, offset + 9, x0, y0, z0, x1, y1, z1, x0, y0, z1, nx, ny, 0);
     }
 
     _getDynamicLayerDef(layerNum) {
       const hue = (layerNum * 137.5) % 360;
+      const c = `hsl(${Math.round(hue)}, 80%, 60%)`;
       return {
         name: `layer_${layerNum}`,
         label: `Layer ${layerNum}`,
-        color: `hsl(${Math.round(hue)}, 75%, 55%)`,
+        color: c,
         elevation: (layerNum % 10) * 0.45,
         thickness: 0.20,
         opacity: 0.85,
         metalness: 0.5,
-        roughness: 0.5
+        roughness: 0.35,
+        emissive: c,
+        emissiveIntensity: 0.15
       };
     }
 
@@ -533,24 +601,36 @@
     }
 
     /**
-     * 2D / 3D Mode Toggle
+     * 2D CAD Top-Down / 3D Perspective Mode Toggle
      */
     set2DMode(enable2D) {
       this.is2DMode = enable2D;
-      const targetPos = this.controls.target.clone();
 
       if (this.is2DMode) {
+        // Switch to Orthographic Top-Down CAD View
         this.activeCamera = this.orthographicCamera;
         this.controls.object = this.orthographicCamera;
-        this.controls.enableRotate = false;
-        this.orthographicCamera.position.set(targetPos.x, targetPos.y, 500);
-        this.orthographicCamera.lookAt(targetPos);
+        this.controls.enableRotate = false; // CAD 2D pan/zoom only
+        
+        // Ensure camera is perfectly aligned straight down with Y pointing up
+        this.orthographicCamera.position.set(0, 0, 500);
+        this.orthographicCamera.up.set(0, 1, 0);
+        this.orthographicCamera.lookAt(0, 0, 0);
+        this.controls.target.set(0, 0, 0);
       } else {
+        // Switch to 3D Perspective Orbiting Mode
         this.activeCamera = this.perspectiveCamera;
         this.controls.object = this.perspectiveCamera;
-        this.controls.enableRotate = true;
-        this.perspectiveCamera.position.set(targetPos.x, targetPos.y - 120, targetPos.z + 100);
-        this.perspectiveCamera.lookAt(targetPos);
+        this.controls.enableRotate = true; // Full 3D rotation
+        this.perspectiveCamera.up.set(0, 0, 1);
+
+        const bbox = (this.currentLayout && this.currentLayout.bbox) ? this.currentLayout.bbox : { width_um: 75, height_um: 75 };
+        const maxDim = Math.max(bbox.width_um, bbox.height_um);
+        const dist = maxDim * 1.5;
+
+        this.perspectiveCamera.position.set(0, -dist * 0.95, dist * 0.85);
+        this.perspectiveCamera.lookAt(0, 0, 0);
+        this.controls.target.set(0, 0, 0);
       }
 
       this._onWindowResize();
@@ -568,15 +648,18 @@
     resetCamera() {
       const bbox = (this.currentLayout && this.currentLayout.bbox) ? this.currentLayout.bbox : { width_um: 75, height_um: 75 };
       const maxDim = Math.max(bbox.width_um, bbox.height_um);
-
       this.controls.target.set(0, 0, 0);
 
-      const dist = maxDim * 1.6;
-      this.perspectiveCamera.position.set(0, -dist * 0.95, dist * 0.85);
-      this.perspectiveCamera.lookAt(0, 0, 0);
-
-      this.orthographicCamera.position.set(0, 0, 500);
-      this.orthographicCamera.lookAt(0, 0, 0);
+      if (this.is2DMode) {
+        this.orthographicCamera.position.set(0, 0, 500);
+        this.orthographicCamera.up.set(0, 1, 0);
+        this.orthographicCamera.lookAt(0, 0, 0);
+      } else {
+        const dist = maxDim * 1.5;
+        this.perspectiveCamera.position.set(0, -dist * 0.95, dist * 0.85);
+        this.perspectiveCamera.up.set(0, 0, 1);
+        this.perspectiveCamera.lookAt(0, 0, 0);
+      }
 
       this._onWindowResize();
       this.controls.update();
@@ -603,18 +686,16 @@
     setSliceX(normalizedVal) {
       if (!this.currentLayout) return;
       const w = this.currentLayout.bbox.width_um;
-      // normalizedVal between -1 and 1
-      this.clipPlaneX.constant = (normalizedVal) * (w / 2);
+      this.clipPlaneX.constant = normalizedVal * (w / 2);
     }
 
     setSliceY(normalizedVal) {
       if (!this.currentLayout) return;
       const h = this.currentLayout.bbox.height_um;
-      this.clipPlaneY.constant = (normalizedVal) * (h / 2);
+      this.clipPlaneY.constant = normalizedVal * (h / 2);
     }
 
     setSliceZ(normalizedVal) {
-      // Slices top-down through max metal height
       const maxZ = 6.0 * (this.explodeFactor || 1.0);
       this.clipPlaneZ.constant = (1.0 - normalizedVal) * maxZ;
     }
@@ -632,7 +713,15 @@
       if (mesh) {
         mesh.material.opacity = opacity;
         mesh.material.transparent = opacity < 1.0;
-        mesh.material.depthWrite = opacity >= 0.95;
+        mesh.material.depthWrite = opacity >= 0.90;
+      }
+    }
+
+    highlightLayer(layerNum, highlight) {
+      const mesh = this.layerMeshes.get(layerNum);
+      if (mesh) {
+        const base = mesh.userData.baseEmissiveIntensity || 0.15;
+        mesh.material.emissiveIntensity = highlight ? 0.70 : base;
       }
     }
 
@@ -689,7 +778,7 @@
     }
 
     _renderRulerMarker(pos, colorHex) {
-      const sphereGeom = new THREE.SphereGeometry(0.8, 16, 16);
+      const sphereGeom = new THREE.SphereGeometry(0.75, 16, 16);
       const sphereMat = new THREE.MeshBasicMaterial({ color: colorHex });
       const sphere = new THREE.Mesh(sphereGeom, sphereMat);
       sphere.position.copy(pos);
@@ -726,7 +815,7 @@
         p1.x, p1.y, p1.z + 0.5
       ]);
       lineGeom.setAttribute('position', new THREE.BufferAttribute(verts, 3));
-      const lineMat = new THREE.LineBasicMaterial({ color: 0x00ffff, linewidth: 2 });
+      const lineMat = new THREE.LineBasicMaterial({ color: 0x22d3ee, linewidth: 2 });
       const line = new THREE.Line(lineGeom, lineMat);
       this.rulerGroup.add(line);
 
@@ -771,7 +860,6 @@
       const exporter = new THREE.GLTFExporter();
       const exportScene = new THREE.Scene();
 
-      // Clone visual elements
       exportScene.add(this.layoutGroup.clone());
       exportScene.add(this.substrateGroup.clone());
 
@@ -798,7 +886,6 @@
     clear() {
       this.clearRuler();
 
-      // Dispose layer meshes
       this.layerMeshes.forEach((mesh) => {
         if (mesh.geometry) mesh.geometry.dispose();
         if (mesh.material) mesh.material.dispose();
@@ -807,7 +894,6 @@
       this.layerMeshes.clear();
       this.layerMeta.clear();
 
-      // Dispose substrate
       while (this.substrateGroup.children.length > 0) {
         const obj = this.substrateGroup.children[0];
         if (obj.geometry) obj.geometry.dispose();
