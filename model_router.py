@@ -113,11 +113,11 @@ PROVIDER_CONFIGS = {
         "env_prefix": "GEMINI_API_KEY",
         "signup_url": "https://aistudio.google.com/app/apikey",
         "models": {
-            "rtl": "gemini-flash-latest",
-            "complex": "gemini-flash-latest",
-            "sta": "gemini-flash-latest",
-            "general": "gemini-flash-latest",
-            "reasoning": "gemini-flash-latest",
+            "rtl": "gemini-3.8-flash",
+            "complex": "gemini-3.8-flash",
+            "sta": "gemini-3.8-flash",
+            "general": "gemini-3.8-flash",
+            "reasoning": "gemini-3.8-flash",
         },
     },
     "nvidia": {
@@ -393,6 +393,8 @@ class ModelRouter:
             if is_err:
                 last_error = result
                 err_summary = resp_str.split("]")[0] + "]" if "]" in resp_str else "error"
+                if "429" in resp_str:
+                    time.sleep(1.5)
                 if num_keys > 1:
                     print(f"[*] [ModelRouter] Account key #{active_idx + 1} for '{provider}' failed ({err_summary}). Rotating to next account key...")
                     continue

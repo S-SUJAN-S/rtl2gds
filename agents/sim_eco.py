@@ -46,7 +46,9 @@ SYSTEM_FIX_TB = (
     "  2. All DUT inputs driven by the TB must be declared as reg.\n"
     "  3. Use non-blocking (<=) for all reg drivers.\n"
     "  4. Add timeout forks/watchdogs for all wait() calls.\n"
-    "  5. Output ENTIRE corrected testbench. Last line: endmodule. No markdown."
+    "  5. In sequential/clocked designs, wait for @(posedge clk); #1; after stimulus before checking outputs.\n"
+    "  6. Verilog tasks CANNOT contain 'return;' statements.\n"
+    "  7. Output ENTIRE corrected testbench. Last line: endmodule. No markdown."
 )
 
 
@@ -160,10 +162,18 @@ class SimECOAgent(BaseAgent):
             )
             fault_history.append({"attempt": attempts, "fault": fault_type, "info": fault_info})
 
-            if fault_type == "TESTBENCH":
-                self._apply_fix(tb_path, fault_info["fixed_code"])
-            else:
-                self._apply_fix(dut_path, fault_info["fixed_code"])
+            target_path = tb_path if fault_type == "TESTBENCH" else dut_path
+            backup_code = target_path.read_text(encoding="utf-8")
+            self._apply_fix(target_path, fault_info["fixed_code"])
+
+            # Safeguard: check if new patch introduced syntax compilation errors
+            check_sim = run_iverilog_sim(str(dut_path), str(tb_path), top_module=f"{design_name}_tb")
+            has_syntax_err = any("syntax error" in l.lower() or "error:" in l.lower() for l in check_sim.output.splitlines())
+            orig_had_syntax = any("syntax error" in l.lower() or "error:" in l.lower() for l in sim_fail_output.splitlines())
+            if has_syntax_err and not orig_had_syntax:
+                if verbose:
+                    print("  [SimECO] [WARN] Patch introduced new syntax errors. Rolling back to clean version.")
+                target_path.write_text(backup_code, encoding="utf-8")
 
         # Final evaluation
         sim_final = run_iverilog_sim(
@@ -195,13 +205,22 @@ class SimECOAgent(BaseAgent):
                            sim_output: str, design_name: str, verbose: bool) -> Tuple[str, Dict[str, Any]]:
         """Classify root cause and generate targeted fix."""
         # Fast deterministic classification for common TB syntax issues
-        if "_tb.v:" in sim_output and "is not a valid l-value" in sim_output:
+        if "Cannot \"return\" from tasks" in sim_output or "cannot \"return\"" in sim_output.lower():
+            fault_type = "TESTBENCH"
+            root_cause = "Illegal 'return' in task - Verilog tasks cannot contain return statements"
+            fixed_code = re.sub(r'^\s*return\s*;', '    ; // AUTO-NEUTRALIZED return', tb_code, flags=re.MULTILINE)
+            return fault_type, {
+                "fixed_code": fixed_code,
+                "root_cause": root_cause,
+                "model": "deterministic_sanitizer",
+            }
+        elif "_tb.v:" in sim_output and "is not a valid l-value" in sim_output:
             fault_type = "TESTBENCH"
             root_cause = "Signals driven in testbench are declared as wire instead of reg"
-        elif "syntax error" in sim_output and "_tb.v:" in sim_output:
+        elif "_tb.v:" in sim_output and ("syntax error" in sim_output.lower() or "error:" in sim_output.lower()):
             fault_type = "TESTBENCH"
             root_cause = "Syntax error inside testbench"
-        elif "syntax error" in sim_output and f"{design_name}.v:" in sim_output:
+        elif f"{design_name}.v:" in sim_output and ("syntax error" in sim_output.lower() or "error:" in sim_output.lower()):
             fault_type = "RTL"
             root_cause = "Syntax error inside RTL module"
         else:
@@ -230,14 +249,17 @@ Classify: Is this an RTL bug or a TESTBENCH bug?"""
         if verbose:
             print(f"  [SimECO] [>>] Classified as: {fault_type} - {root_cause}")
 
+        fail_lines = [l for l in sim_output.splitlines() if any(kw in l for kw in ["[FAIL]", "error:", "%Error", "Error:"])]
+        compact_fail = "\n".join(fail_lines[:10]) if fail_lines else sim_output[:400]
+
         # Fix the targeted code
         if fault_type == "RTL":
             fix_prompt = f"""Fix the RTL Verilog for '{design_name}' to pass simulation.
 
 BUG REPORT: {root_cause}
 
-SIMULATION FAILURE OUTPUT:
-{sim_output[:1000]}
+FAILING SIMULATION CHECKS:
+{compact_fail}
 
 CURRENT RTL:
 {dut_code}
@@ -249,11 +271,11 @@ Output the ENTIRE corrected Verilog. Last line: endmodule"""
 
 BUG REPORT: {root_cause}
 
-SIMULATION FAILURE OUTPUT:
-{sim_output[:1000]}
+FAILING SIMULATION CHECKS:
+{compact_fail}
 
 DUT VERILOG (reference only - do NOT change this):
-{dut_code[:1500]}
+{dut_code[:1000]}
 
 CURRENT TESTBENCH:
 {tb_code}

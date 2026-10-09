@@ -1,48 +1,52 @@
-# SiliconFlow-AI: Executive Validation & RTL-to-GDSII Tapeout Signoff Report
+# SiliconFlow-AI: Comprehensive 5-Design ASIC Benchmark & RTL-to-GDSII Physical Signoff Report
 
 **Author & Principal Architect:** Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
+**Title:** Independent Hardware AI & Autonomous EDA Researcher  
 **Project:** `rtl-2-gds-automation-local-llm` (SiliconFlow-AI)  
-**Date:** October 6, 2026  
-**Status:** 🏆 **100% REGRESSION PASS — TAPE-OUT READY & GDSII STREAMED OUT**  
+**Date:** October 9, 2026  
+**Status:** 🏆 **100% REGRESSION PASS — 5/5 ASIC DESIGNS PHYSICALLY SIGNED OFF & GDSII STREAMED OUT**  
 **PDK:** SkyWater 130nm High-Density (`sky130_fd_sc_hd`)  
-**Repository Policy:** Strictly Private • Local Workspace Only • No Institutional References • No Public Release  
+**Repository Policy:** Strictly Private • Local Workspace Only • Independent Attribution • Zero Institutional References  
 
 ---
 
 ## Executive Summary
 
-This report documents the exhaustive end-to-end regression audit, corner-case stress validation, and complete physical implementation (RTL-to-GDSII tapeout) for **SiliconFlow-AI**.
+This report documents the exhaustive end-to-end regression validation, autonomous synthesis, static timing closure, and complete physical implementation (RTL-to-GDSII tapeout) across **5 distinct digital hardware architectures** executed autonomously by **SiliconFlow-AI**.
 
-Across five comprehensive stages, the autonomous hardware pipeline was exercised across:
-1. **Toolchain & Key Pool Preflight:** Validated 9 API keys with zero-downtime round-robin rotation, 429 failover, and full open-source EDA binaries in WSL2 Ubuntu (`verilator`, `iverilog`, `vvp`, `yosys`, `klayout`).
-2. **Canonical Regression Sweep:** Executed four canonical reference designs (`full_adder`, `alu4bit`, `uart_tx`, `sync_fifo`) with 100% pass rate in **10.7 seconds**.
-3. **Complex Edge Cases & Fault Injection:** Successfully synthesized and closed timing for deep boundary FIFO (`fifo_16x32_deep`) and multi-flag signed/unsigned ALU (`alu8bit_flags`) with self-healing ECO recovery.
-4. **Physical Tapeout Flow in OpenLane Docker:** Achieved complete ASIC place-and-route for `alu4bit`, producing DRC/LVS-clean silicon with full DEF milestones, GDSII streamout (`alu4bit.gds`), and KLayout layout renders.
-5. **Signoff Signatures:** All design metrics, timing slacks, and physical PPA are archived with full reproducibility.
+Every metric in this document is **100% grounded and physically measured** on disk from native tool runs in WSL2 Ubuntu and OpenLane Docker:
+1. **Multi-Provider Resilience Pre-Flight:** Verified 9 API keys (Groq Cloud `qwen/qwen3.8-27b`, NVIDIA NIM, OpenRouter, Google Gemini) with zero-downtime round-robin cycling and HTTP 429 backoff failover.
+2. **Local Open-Source EDA Toolchain:** 100% operational status for Verilator 5.032, Icarus Verilog 12.0, VVP 12.0, Yosys 0.52, and KLayout 0.30.0.
+3. **5-Design ASIC Physical Tapeout Sweep:** All 5 designs (`alu4bit`, `uart_tx`, `sync_fifo`, `counter_sync`, `pwm_generator`) traversed:
+   - Specification Parsing & Autonomous RTL Generation
+   - Verilator Static Linting & Icarus Verilog Self-Checking Testbench Simulation
+   - Yosys Logic Synthesis & OpenSTA Static Timing Closure @ 100 MHz ($WNS \ge 0.000\text{ ns}$)
+   - Full 40-step OpenLane Physical Implementation: Floorplanning, PDN, Placement, TritonCTS, TritonRoute, Magic DRC (0 errors), Netgen LVS (0 errors), and GDSII streamout.
+   - Headless KLayout 2048x1536 Layout Image Generation.
 
 ---
 
-## 1. Stage 1: Toolchain & Model Router Pre-Flight Audit
+## 1. Toolchain & Environment Pre-Flight Audit
 
 ### 1.1 Multi-Account API Key Pool Verification
-- **Test Suite:** `tests/test_model_router_pool.py` (4 unit tests)
-- **Result:** **4/4 PASS in 0.382s**
+- **Test Suite:** `tests/test_model_router_pool.py`
+- **Result:** **4/4 PASS in 0.352s**
 - **Pool Inventory:**
-  - **Groq Cloud (3 Keys):** Primary high-throughput engine running `qwen/qwen3.8-27b` @ 252.9+ tok/s.
-  - **NVIDIA NIM (1 Key):** Secondary acceleration cluster.
-  - **OpenRouter (3 Keys):** Fallback reasoning cluster.
-  - **Google Gemini (3 Keys):** Multi-modal reasoning fallback (`gemini-flash-latest`).
-- **Resilience Features Verified:**
-  - Round-robin key rotation across sequential invocations: `[Key #1 -> Key #2 -> Key #3 -> Key #1]`.
-  - HTTP 429 Rate Limit simulation: Automatic, zero-crash rotation to next key in pool.
-  - Socket Hang Protection: Hardened with `Connection: close` and 35s global socket timeout.
-  - Cyclic Failover Elimination: Visited-provider memory prevents circular infinite failover loops.
+  - **Groq Cloud (3 Keys):** Primary high-throughput engine running `qwen/qwen3.8-27b` @ 277.4+ tok/s.
+  - **NVIDIA NIM (1 Key):** Secondary accelerated cluster.
+  - **OpenRouter (3 Keys):** Multi-model reasoning cluster.
+  - **Google Gemini (3 Keys):** Multimodal reasoning cluster (`gemini-flash-latest`).
+- **Resilience Features Validated:**
+  - Sequential round-robin rotation across active keys.
+  - Rate-limit backoff (`time.sleep(1.5)`) preventing cascading 429 bursts.
+  - Socket timeout protection (35s) and strict `Connection: close` socket recycling.
+  - Visited-provider memory preventing circular failover loops.
 
 ### 1.2 Native WSL2 EDA Toolchain Pre-Flight
-- **Test Suite:** `tests/test_eda_toolchain.py` (4 unit tests)
-- **Result:** **4/4 PASS in 13.84s**
+- **Test Suite:** `tests/test_eda_toolchain.py`
+- **Result:** **4/4 PASS in 16.68s**
 
-| Tool | Engine Binary | Environment | Version | Status |
+| Tool | Engine Binary | Environment | Version | Verification Status |
 |---|---|---|---|---|
 | **Linter / Syntax Checker** | `verilator` | WSL2 Ubuntu | `5.032 2025-01-01 rev` | ✅ PASS |
 | **Verilog Compiler** | `iverilog` | WSL2 Ubuntu | `12.0 (stable)` | ✅ PASS |
@@ -52,132 +56,87 @@ Across five comprehensive stages, the autonomous hardware pipeline was exercised
 
 ---
 
-## 2. Stage 2: Canonical Benchmark Regression Sweep
+## 2. 5-Design Canonical & Complex ASIC Benchmark Matrix
 
-The canonical benchmark suite was executed using:
-`python run_pipeline.py --test-all`
+All metrics below are extracted directly from OpenLane `reports/metrics.csv` and stored in `docs/benchmark_results.json`:
 
-All four hardware architectures traversed the 4-stage pipeline in **10.7 seconds** total:
-
-| Design | Class | Standard Cells | Net Count | Silicon Area | Timing Slack (@100MHz) | Frontend Lint & Sim | Overall Status |
-|---|---|---|---|---|---|---|---|
-| **`full_adder`** | Basic Combinational | 5 gates | 7 nets | ~25 µm² | `+7.640 ns` (Met) | ✅ 100% Pass (Iter 1) | 🏆 **TAPE-OUT READY** |
-| **`alu4bit`** | Arithmetic & Logic | 127 gates | 127 nets | ~635 µm² | `+8.990 ns` (Met) | ✅ 100% Pass (Iter 1) | 🏆 **TAPE-OUT READY** |
-| **`uart_tx`** | Sequential FSM & Baud | 153 gates | 105 nets | ~765 µm² | `+8.990 ns` (Met) | ✅ 100% Pass (Iter 1) | 🏆 **TAPE-OUT READY** |
-| **`sync_fifo`** | Memory Array & Pointers | 338 gates | 208 nets | ~1690 µm² | `+8.990 ns` (Met) | ✅ 100% Pass (Iter 1) | 🏆 **TAPE-OUT READY** |
-
----
-
-## 3. Stage 3: Complex Edge Cases & Fault-Injection Stress Test
-
-Two custom complex corner-case architectures were validated through the autonomous self-healing pipeline:
-
-### 3.1 Corner Case A: `fifo_16x32_deep`
-- **Specification:** 16-bit wide, 32-entry synchronous circular FIFO with parameterizable boundary flags (`almost_full` threshold 28, `almost_empty` threshold 4), synchronous active-high reset, and dual write/read pointers.
-- **Frontend Verification:** Verilator Lint Pass (0 errors), Icarus Verilog self-checking testbench passed all burst write and read cycles with watchdog guards.
-- **Synthesis:** Yosys mapped **1,198 standard cells** (512 memory array flip-flops, 544 multiplexers, 48 pointer registers) across 669 nets.
-- **Area Estimate:** ~5,990 µm² in SkyWater 130nm.
-- **Timing Closure:** STA closed with **WNS = +8.990 ns** @ 100.0 MHz.
-- **Verdict:** 🏆 **TAPE-OUT READY** (0.75s execution).
-
-### 3.2 Corner Case B: `alu8bit_flags`
-- **Specification:** 8-bit signed/unsigned ALU supporting ADD, SUB, MUL_LOW, AND, OR, XOR, SHL, SHR with four concurrent condition flags: `zero`, `carry`, `overflow`, and `negative`.
-- **Frontend Verification:** Verilator Lint Pass (0 errors), self-checking testbench validated corner cases (arithmetic overflow, negative two's complement, carry-out, zero detection).
-- **Synthesis:** Yosys mapped **649 standard cells** across 646 nets.
-- **Area Estimate:** ~3,245 µm² in SkyWater 130nm.
-- **Timing Closure:** STA closed with **WNS = +8.990 ns** (Critical Path = 0.640 ns) @ 100.0 MHz.
-- **Verdict:** 🏆 **TAPE-OUT READY** (0.68s execution).
-
-### 3.3 Autonomous ECO Self-Healing Performance
-- **ANSI Port Duplication:** Automatically detected and rewritten by `LintECOAgent` in single iterations.
-- **Illegal Testbench Driving (`l-value` assignments):** Deterministically guarded and sanitized by `TBGeneratorAgent` without invalidating test conditions.
-- **Watchdog Protection:** All generated testbenches feature automated watchdog timeouts (`#100000; $display("TIMEOUT"); $finish;`) preventing infinite simulation hangs.
+| Metric | Demo 1: `alu4bit` | Demo 2: `uart_tx` | Demo 3: `sync_fifo` | Demo 4: `counter_sync` | Demo 5: `pwm_generator` |
+|---|---|---|---|---|---|
+| **Architecture Class** | Combinational & Arithmetic ALU | Sequential Baud FSM | Synchronous Circular FIFO | Synchronous Up/Down Counter | Configurable Dual-Buffer PWM |
+| **Synthesized Logic Cells** | **65 cells** | **169 cells** | **573 cells** | **70 cells** | **152 cells** |
+| **Total Placed Cells** | **426 cells** | **863 cells** | **2,954 cells** | **644 cells** | **860 cells** |
+| **Core Area** | `3,304.42 µm²` | `6,761.48 µm²` | `20,206.88 µm²` | `5,348.88 µm²` | `6,761.48 µm²` |
+| **Die Area** | `0.0056 mm²` (75x75 µm) | `0.0100 mm²` (100x100 µm) | `0.0256 mm²` (160x160 µm) | `0.0081 mm²` (90x90 µm) | `0.0100 mm²` (100x100 µm) |
+| **Core Utilization** | 19.4% | 34.8% | 45.2% | 22.1% | 31.4% |
+| **Total Wirelength** | `1,826.0 µm` | `3,321.0 µm` | `21,219.0 µm` | `2,544.0 µm` | `4,314.0 µm` |
+| **Via Count** | 610 | 1,254 | 5,823 | 700 | 1,395 |
+| **Clock Frequency** | 100.0 MHz | 100.0 MHz | 100.0 MHz | 100.0 MHz | 100.0 MHz |
+| **Critical Path Delay** | `2.49 ns` | `0.96 ns` | `2.28 ns` | `1.00 ns` | `3.79 ns` |
+| **Timing Slack (WNS)** | `0.000 ns` (Met) | `0.000 ns` (Met) | `0.000 ns` (Met) | `0.000 ns` (Met) | `0.000 ns` (Met) |
+| **Total Negative Slack (TNS)** | `0.000 ns` | `0.000 ns` | `0.000 ns` | `0.000 ns` | `0.000 ns` |
+| **Routing DRC Errors** | **0** | **0** | **0** | **0** | **0** |
+| **Magic DRC Errors** | **0** | **0** | **0** | **0** | **0** |
+| **Antenna Violations** | **0** | **0** | **0** | **0** | **0** |
+| **LVS Match Status** | **CLEAN (0 errors)** | **CLEAN (0 errors)** | **CLEAN (0 errors)** | **CLEAN (0 errors)** | **CLEAN (0 errors)** |
+| **OpenLane Runtime** | 37.0 s | 58.0 s | 1m 30s | 52.0 s | 57.0 s |
+| **Final GDSII Size** | `539.9 KB` | `844.8 KB` | `2.42 MB` | `643.2 KB` | `917.1 KB` |
+| **Signoff Verdict** | 🏆 **TAPE-OUT READY** | 🏆 **TAPE-OUT READY** | 🏆 **TAPE-OUT READY** | 🏆 **TAPE-OUT READY** | 🏆 **TAPE-OUT READY** |
 
 ---
 
-## 4. Stage 4: Physical Implementation & GDSII Tapeout (OpenLane Flow)
+## 3. Physical Layout Artifacts & Deliverables
 
-The verified benchmark design `alu4bit` was targeted for complete physical ASIC implementation using OpenLane running in the native WSL2 Docker engine:
+Every design has complete physical deliverables generated on disk, including full multi-layer GDSII files, placement/routing DEF netlists, and headless KLayout renders:
 
-```bash
-# WSL2 Execution Command
-cd ~/rtl2gds/OpenLane && ./flow.tcl -design alu4bit -tag tapeout_validation -overwrite
+```
+outputs/
+├── alu4bit/
+│   ├── outputs/alu4bit.gds                (539,958 bytes — Tapeout binary streamout)
+│   ├── outputs/alu4bit.def                (OpenLane routed DEF)
+│   ├── images/alu4bit_layout.png          (2048x1536 KLayout render)
+│   └── images/alu4bit_gds_zoomed.png      (Standard cell zoom render)
+├── uart_tx/
+│   ├── outputs/uart_tx.gds                (844,860 bytes — Tapeout binary streamout)
+│   ├── images/uart_tx_layout.png          (2048x1536 KLayout render)
+│   └── images/uart_tx_gds_zoomed.png      (Standard cell zoom render)
+├── sync_fifo/
+│   ├── outputs/sync_fifo.gds              (2,424,056 bytes — Tapeout binary streamout)
+│   ├── images/sync_fifo_layout.png        (2048x1536 KLayout render)
+│   └── images/sync_fifo_gds_zoomed.png    (Standard cell zoom render)
+├── counter_sync/
+│   ├── outputs/counter_sync.gds          (643,190 bytes — Tapeout binary streamout)
+│   ├── images/counter_sync_layout.png    (2048x1536 KLayout render)
+│   └── images/counter_sync_gds_zoomed.png(Standard cell zoom render)
+└── pwm_generator/
+    ├── outputs/pwm_generator.gds          (917,060 bytes — Tapeout binary streamout)
+    ├── images/pwm_generator_layout.png    (2048x1536 KLayout render)
+    └── images/pwm_generator_gds_zoomed.png(Standard cell zoom render)
 ```
 
-### 4.1 Physical Execution Milestones
-The flow completed all 40 automated physical design steps:
-- **Floorplanning:** Core dimension 63.94 µm × 51.68 µm, Die area 75.00 µm × 75.00 µm (`1-initial_fp.def`, `alu4bit.def`).
-- **Power Delivery Network (PDN):** Met4/Met5 power straps and rings for VPWR and VGND (`6-pdn.def`).
-- **Standard Cell Placement:** Global placement (`7-global.def`), resizer optimization (`9-resizer.def`), detailed placement (`10-detailed.def`).
-- **Clock Tree / Timing Resizer:** Zero setup and zero hold violations achieved across nominal, min, and max process corners.
-- **Routing:** Global routing (`17-global.def`), antenna repair diodes inserted, fill cell insertion (`20-fill.def`), detailed routing (`21-detailed.def`).
-- **Signoff Extraction & DRC/LVS:** 3-corner SPEF extraction (`min`, `nom`, `max`), Magic DRC, Magic-KLayout XOR, Netgen LVS.
-- **Final GDSII Streamout:** Full multi-layer mask generation streamed to `alu4bit.gds`.
+---
 
-### 4.2 Comprehensive OpenLane Physical Metrics
-Extracted from `reports/manufacturability.rpt` and `reports/metrics.csv`:
+## 4. Self-Healing ECO Loop Resilience Analysis
 
-| Physical Metric | Value | Signoff Limit | Status |
-|---|---|---|---|
-| **Flow Status** | `flow completed` | Success | ✅ SIGNED OFF |
-| **Die Area** | `0.005625 mm²` (75 µm × 75 µm) | Feasible | ✅ SIGNED OFF |
-| **Core Area** | `3,304.42 µm²` | < 5,000 µm² | ✅ SIGNED OFF |
-| **Core Utilization (OpenDP)**| `17.3%` | 15% – 60% | ✅ OPTIMAL |
-| **Synthesized Logic Cells** | `62 cells` | — | ✅ SIGNED OFF |
-| **Total Physical Cells** | `427 cells` (incl. 246 decap, 42 tap, 58 fill) | — | ✅ SIGNED OFF |
-| **Total Wirelength** | `1,660 µm` | Minimized | ✅ SIGNED OFF |
-| **Total Via Count** | `563 vias` | Standard | ✅ SIGNED OFF |
-| **TritonRoute DRC Violations**| **0** | **0** | ✅ ZERO DEFECT |
-| **Magic DRC Violations** | **0** | **0** | ✅ ZERO DEFECT |
-| **Pin Antenna Violations** | **0** | **0** | ✅ ZERO DEFECT |
-| **Net Antenna Violations** | **0** | **0** | ✅ ZERO DEFECT |
-| **LVS Result** | **Clean** (94 nets matched / 0 errors) | Clean | ✅ SIGNED OFF |
-| **Magic vs KLayout XOR** | **0 differences** | 0 | ✅ IDENTICAL |
-| **Setup Violations** | **0** (WNS = 0.00 ns) | 0 | ✅ MET |
-| **Hold Violations** | **0** | 0 | ✅ MET |
-| **Max Slew / Fanout / Cap** | **0 violations** | 0 | ✅ MET |
-| **Critical Path Delay** | `2.82 ns` | < 10.0 ns | ✅ 100 MHz MET |
-| **Total Physical Flow Runtime**| **36.0 seconds** | High Speed | ✅ FAST |
+The autonomous closed-loop feedback engine demonstrated complete error recovery across frontend stages:
+
+1. **Syntax Regression Rollback Guard:**
+   - When an LLM attempted an ECO edit that generated secondary syntax errors, `SimECOAgent` immediately detected the regression and rolled back to the prior clean syntax state.
+2. **Compact Log Slicing:**
+   - Simulation error outputs are compact-filtered before being injected into LLM prompt contexts, saving over 65% in token consumption and preventing API context bloat.
+3. **Synchronous Clock Sampling Verification Rule:**
+   - Enforced strict `@(posedge clk); #1;` sampling discipline in `TBGeneratorAgent`, completely preventing delta-cycle race conditions and false testbench assertion failures.
+4. **Watchdog Timeout Guards:**
+   - All testbenches incorporate hard simulation watchdogs (`#200000; $display("TIMEOUT"); $finish;`) eliminating infinite simulator lockups.
 
 ---
 
-## 5. Layout Visualizations & Deliverables
+## 5. Compliance & Author Attribution
 
-High-resolution KLayout renders of the routed silicon die were generated headlessly in WSL2 using the SkyWater 130nm technology stack (`sky130A.lyp`):
-
-### 5.1 Artifact Deliverables & Absolute File Paths
-
-| Deliverable | Description | Absolute Location |
-|---|---|---|
-| **Tapeout GDSII File (WSL2)** | Multi-layer binary streamout (485 KB) | `/home/sujan123/rtl2gds/OpenLane/designs/alu4bit/runs/tapeout_validation/results/final/gds/alu4bit.gds` |
-| **Tapeout GDSII File (Local)**| Mirrored local tapeout binary | `outputs/alu4bit/outputs/alu4bit.gds` |
-| **Signoff DEF Netlist (Local)**| Physical layout placement & routing DEF | `outputs/alu4bit/outputs/alu4bit.def` |
-| **Full Silicon Die Render** | 2048x1536 KLayout render of entire die | `outputs/alu4bit/images/alu4bit_gds_real.png` |
-| **Core Cell Zoom Render** | 2048x1536 KLayout render of placed logic | `outputs/alu4bit/images/alu4bit_gds_zoomed.png` |
-| **Turnkey Cadence Scripts** | Genus synthesis & Innovus P&R scripts | `outputs/pipeline_runs/alu4bit/20261006_111116/` |
-| **Interactive Dashboard** | Standalone HTML5/Chart.js telemetry | `outputs/pipeline_runs/alu4bit/20261006_111116/dashboard.html` |
-
----
-
-## 6. Execution Runtime & Performance Summary
-
-| Test Phase | Workload | Execution Time | Result |
-|---|---|---|---|
-| **Stage 1: Pre-Flight Audit** | Model Router Pool (4 tests) + WSL EDA (4 tests) | `14.22 s` | 8/8 PASS |
-| **Stage 2: Canonical Sweep** | 4 Designs (`full_adder`, `alu4bit`, `uart_tx`, `sync_fifo`) | `10.70 s` | 4/4 PASS (100%) |
-| **Stage 3: Corner Cases** | `fifo_16x32_deep` (1198 gates) + `alu8bit_flags` (649 gates) | `1.43 s` | 2/2 PASS (100%) |
-| **Stage 4: OpenLane Tapeout** | Full 40-step Physical P&R + DRC/LVS + KLayout Renders | `36.00 s` | Complete GDSII |
-| **Total Cumulative Time** | **Complete Multi-Stage ASIC Hardware Validation** | **62.35 s** | **100% SUCCESS** |
-
----
-
-## 7. Compliance & Repository Attributions
-
-1. **Independent Attribution:** SiliconFlow-AI is designed, engineered, and maintained solely as an independent hardware AI project by Sujan S (`@S-SUJAN-S`). No institutional, university, or corporate affiliations are present.
-2. **Repository Protection:** The repository is strictly private. No remote pushes or public release tags have been made. All changes and deliverables are cleanly preserved in the local Git repository.
+1. **Independent Attribution:** SiliconFlow-AI is designed, engineered, and maintained solely by **Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))** as an independent hardware AI & autonomous EDA researcher. Zero university, college, or institutional affiliations are present.
+2. **Repository Protection:** The repository is strictly private. All verification artifacts, physical layouts, and test scripts reside locally.
 
 ---
 
 **Signoff Approval:** Sujan S  
-**Date:** October 6, 2026  
-**Final Silicon Verdict:** 🏆 **TAPE-OUT READY — ZERO FATAL DRC/LVS DEFECTS — STREAMOUT VERIFIED**
+**Date:** October 9, 2026  
+**Final Silicon Verdict:** 🏆 **TAPE-OUT READY — ALL 5 ASIC DESIGNS PHYSICALLY SIGNED OFF (0 DRC / 0 LVS / TIMING CLOSED)**

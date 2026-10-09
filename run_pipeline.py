@@ -130,6 +130,32 @@ CANONICAL_DESIGNS = {
         "has_clock": True,
         "clock_period_ns": 10.0,
     },
+    "counter_sync": {
+        "prompt": (
+            "Write an 8-bit synchronous up/down counter. "
+            "Ports: clk, rst (synchronous active-high), load, enable, up_down, "
+            "data_in[7:0], count[7:0] (output reg), terminal_count (output). "
+            "On posedge clk: if (rst) count <= 8'h00; else if (load) count <= data_in; "
+            "else if (enable) count <= up_down ? (count + 8'h01) : (count - 8'h01); "
+            "assign terminal_count = (up_down ? (count == 8'hFF) : (count == 8'h00)) & enable;"
+        ),
+        "protocol": "custom",
+        "has_clock": True,
+        "clock_period_ns": 10.0,
+    },
+    "pwm_generator": {
+        "prompt": (
+            "Write an 8-bit configurable Pulse Width Modulation (PWM) generator. "
+            "Ports: clk, rst (synchronous active-high), duty[7:0], period[7:0], pwm_out (output reg). "
+            "Use internal 8-bit counter. Double-buffer duty and period registers on period rollover. "
+            "When counter + 1 >= period_reg or period_reg == 0: counter resets to 0 and buffers update. "
+            "Else: counter increments. "
+            "pwm_out is 1 when (duty_reg > 0 && (counter < duty_reg || duty_reg >= period_reg)), else 0."
+        ),
+        "protocol": "PWM",
+        "has_clock": True,
+        "clock_period_ns": 10.0,
+    },
 }
 
 

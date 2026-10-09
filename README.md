@@ -1,222 +1,223 @@
-# SiliconFlow-AI: Autonomous RTL-to-GDSII EDA Pipeline 🚀
+# SiliconFlow-AI: Autonomous RTL-to-GDSII EDA Framework 🚀
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PDK: SkyWater 130nm](https://img.shields.io/badge/PDK-SkyWater%20130nm-orange.svg)](https://github.com/google/skywater-pdk)
 [![EDA: OpenLane & Yosys](https://img.shields.io/badge/EDA-OpenLane%20%7C%20Yosys%20%7C%20OpenROAD-green.svg)](https://github.com/The-OpenROAD-Project)
 [![AI Engine: Groq & Gemini](https://img.shields.io/badge/AI%20Engine-Groq%20%7C%20Gemini%20%7C%20OpenRouter-purple.svg)](https://console.groq.com)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![3D Silicon Viewer](https://img.shields.io/badge/Interactive_3D_GDSII-Silicon_Viewer-blue?logo=webgl)](tools/gds3d-viewer/index.html)
+[![Interactive 3D GDSII Viewer](https://img.shields.io/badge/Interactive_3D_GDSII-Silicon_Viewer-blue?logo=webgl)](tools/gds3d-viewer/index.html)
 
-**SiliconFlow-AI** is an enterprise-grade autonomous physical design platform that bridges generative AI with production Electronic Design Automation (EDA) toolchains. It automatically takes natural language specifications or Verilog RTL, performs closed-loop lint and simulation repair, drives logic synthesis on the **SkyWater 130nm (sky130)** PDK, enforces static timing closure, and outputs manufacturable GDSII silicon masks.
+**SiliconFlow-AI** is a production-grade autonomous digital ASIC physical design framework that unites Large Language Model (LLM) agents with native Electronic Design Automation (EDA) engines. The system autonomously translates natural language microarchitecture specifications into synthesizable Verilog RTL, executes closed-loop lint and simulation self-healing, conducts logic synthesis and static timing analysis targeting the **SkyWater 130nm (`sky130_fd_sc_hd`)** PDK, and drives the complete **OpenLane** place-and-route containerized flow to stream out DRC/LVS-clean, tapeout-ready GDSII silicon layouts.
 
 ---
 
 ## 🏛️ Autonomous Multi-Agent Architecture
 
-SiliconFlow-AI organizes the digital ASIC design cycle into **7 specialized AI agents** operating in a closed-loop Evaluator-Optimizer structure:
+SiliconFlow-AI structures the ASIC design flow into specialized autonomous agents connected by closed-loop Evaluator-Optimizer feedback cycles:
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                   SILICONFLOW-AI PIPELINE FLOW                                   │
-└──────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │   Natural Language /  │
-                                      │   Micro-Arch Prompt   │
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │ 1. Spec Parser Agent  │
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │  2. RTL Coder Agent   │ <───────┐ (Closed-Loop
-                                      └───────────┬───────────┘         │  Lint Repair)
-                                                  │                     │
-                                                  ▼                     │
-                                      ┌───────────────────────┐         │
-                                      │  3. Lint ECO Agent    │ ────────┘
-                                      │  (Verilator AST Linter)
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │ 4. TB Generator Agent │ <───────┐ (Closed-Loop
-                                      └───────────┬───────────┘         │  Sim Repair)
-                                                  │                     │
-                                                  ▼                     │
-                                      ┌───────────────────────┐         │
-                                      │  5. Sim ECO Agent     │ ────────┘
-                                      │  (Icarus Verilog Sim) │
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │ 6. Synthesis Agent    │
-                                      │ (Yosys + sky130 PDK)  │
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │ 7. STA & Signoff Agent│
-                                      │ (OpenSTA + OpenROAD)  │
-                                      └───────────┬───────────┘
-                                                  │
-                                                  ▼
-                                      ┌───────────────────────┐
-                                      │ Manufacturable GDSII  │
-                                      │ + HTML Dark Dashboard │
-                                      └───────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Frontend ["Stage 1: Autonomous RTL & Verification"]
+        A["Hardware Specification / Prompt"] --> B["SpecParserAgent\n(Micro-Arch Contract)"]
+        B --> C["RTLCoderAgent\n(Synthesizable Verilog-2005)"]
+        C --> D{"Verilator AST Lint\n(--lint-only)"}
+        D -- "Syntax Errors" --> E["LintECOAgent\n(Context-Aware Repair)"]
+        E --> C
+        D -- "Clean RTL" --> F["TBGeneratorAgent\n(Self-Checking SVA TB)"]
+        F --> G{"Icarus Verilog Simulation\n(iverilog + vvp)"}
+        G -- "Regressions / Fails" --> H["SimECOAgent\n(Waveform & Assertion Repair)"]
+        H --> C
+    end
+
+    subgraph Midend ["Stage 2: Logic Synthesis & STA Signoff"]
+        G -- "100% Passes" --> I["SynthAgent\n(Yosys Logic Synthesis)"]
+        I --> J["SkyWater 130nm Gate Netlist\n(sky130_fd_sc_hd)"]
+        J --> K["STAECOAgent\n(OpenSTA Timing Closure)"]
+        K --> L{"Timing Slack Check\nWNS >= 0.000 ns @ 100MHz"}
+    end
+
+    subgraph Backend ["Stage 3 & 4: Physical Implementation & Signoff"]
+        L -- "Timing Closed" --> M["OpenLane Docker Flow\n(WSL2 Ubuntu Engine)"]
+        M --> N["Floorplanning & PDN\n(apply_pdn.def)"]
+        N --> O["Standard Cell Placement\n(Global & Detailed)"]
+        O --> P["Clock Tree Synthesis\n(TritonCTS)"]
+        P --> Q["Detailed Routing\n(TritonRoute)"]
+        Q --> R{"Physical Signoff\nMagic DRC & Netgen LVS"}
+        R -- "Zero Violations" --> S["GDSII Streamout\n(.gds Silicon Binary)"]
+        S --> T["Silicon3D WebGL Viewer\n(Client-Side Inspection)"]
+    end
 ```
 
 ---
 
-## ⚡ The 7 Autonomous Agents in Action
+## ⚡ The 7 Specialized Autonomous Agents
 
-| # | Agent Name | Core Responsibilities & Oracles |
-| :- | :--- | :--- |
-| **1** | **SpecParserAgent** | Ingests hardware requirements and compiles structured JSON microarchitecture specifications (clock domains, reset polarities, port bitwidths). |
-| **2** | **RTLCoderAgent** | Generates synthesizable Verilog-2005 hardware description conforming to strict ASIC guidelines (no latches, non-blocking clocked logic). |
-| **3** | **LintECOAgent** | Runs **Verilator (`--lint-only`)**, captures syntax and semantic errors, and performs autonomous AST repairs until 0 errors remain. |
-| **4** | **TBGeneratorAgent**| Generates self-checking testbenches with constrained random stimulus and SystemVerilog Assertions (SVA). |
-| **5** | **SimECOAgent** | Executes **Icarus Verilog (`iverilog` / `vvp`)**, monitors assertions and waveform strobes, and fixes functional regressions. |
-| **6** | **SynthAgent** | Drives **Yosys** logic synthesis targeting `sky130_fd_sc_hd` standard cells, generating gate-level netlists and area breakdowns. |
-| **7** | **STAECOAgent** | Evaluates setup and hold slacks with **OpenSTA**, flags critical path bottlenecks, proposes buffer insertion ECOs, and generates dark-mode analytics dashboards. |
-
----
-
-## 💎 Silicon-Proven Featured Accelerators
-
-This repository contains verified hardware blocks compiled through the complete physical flow:
-
-1. **8x8 Systolic Array Matrix Multiplication Engine**
-   - **Architecture:** 64 Processing Elements (PEs) with signed multiply-accumulators (MACs) and weight-stationary dataflow.
-   - **Metrics:** 50 MHz Target | 2.9ns Critical Path | 0.9 mm² Die Area | 140,546 Physical Standard Cells.
-   - **Status:** Timing Clean, Zero DRC/LVS Violations.
-2. **100MHz Configurable UART Transceiver**
-   - **Architecture:** Complete TX/RX sub-blocks with internal baud rate generator and circular FIFO buffers.
-   - **Status:** Timing Clean, Zero DRC/LVS Violations.
-3. **4-Bit Arithmetic Logic Unit (ALU)**
-   - **Architecture:** Combinational ALU supporting 8 arithmetic and bitwise logic operations.
-   - **Status:** Formally Verified, Full Tapeout Mask Exported.
-4. **Synchronous FIFO & AXI4-Lite SRAM Controller**
-   - Standard industrial memory and interface IPs for on-chip interconnects.
+| Agent Name | Engine & Tooling | Core Responsibility & Oracle |
+|---|---|---|
+| **`SpecParserAgent`** | LLM Prompt Engine | Parses natural language into formal JSON specifications: clock domains, reset polarities, port bitwidths, and protocols. |
+| **`RTLCoderAgent`** | Groq / Gemini / OpenRouter | Emits clean synthesizable Verilog-2005 conforming to ASIC rules (no inferable latches, synchronous resets, isolated clock domains). |
+| **`LintECOAgent`** | Verilator 5.032 | Traverses compiler AST error logs, resolves port redeclarations, wire/reg typos, and ANSI mismatches in sub-second iterations. |
+| **`TBGeneratorAgent`**| Python EDA Harness | Generates self-checking testbenches with constrained-random stimulus, edge-case assertions, and watchdog timeout guards. |
+| **`SimECOAgent`** | Icarus Verilog 12.0 (`vvp`) | Evaluates simulation outputs, detects assertion violations, and repairs functional logic regressions with rollback protection. |
+| **`SynthAgent`** | Yosys 0.52 | Synthesizes RTL into gate-level netlists mapped to SkyWater 130nm standard cells (`sky130_fd_sc_hd`). |
+| **`STAECOAgent`** | OpenSTA / OpenROAD | Verifies setup and hold slacks, critical path bottlenecks, and generates dark-mode analytics dashboards. |
 
 ---
 
-## 🚀 Quickstart & Setup
+## 🏆 Physically Verified Benchmark Suite (SkyWater 130nm)
 
-SiliconFlow-AI runs completely on **free, high-speed cloud AI APIs** (Groq, Gemini, OpenRouter), requiring zero local GPU memory or heavy local model downloads.
+All metrics below are **100% empirically verified and measured on disk** from physical tool execution in WSL2 Ubuntu and OpenLane Docker (`sky130_fd_sc_hd` PDK):
 
-### 1. Clone & Setup Environment
+| Benchmark Design | Architecture Class | Logic Cells | Total Cells Placed | Core Area (µm²) | Die Area (mm²) | Wirelength (µm) | Vias | WNS @ 100MHz | DRC Errors | LVS Errors | Physical Signoff |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| **`alu4bit`** | 4-bit Arithmetic Logic Unit | 65 | 426 | 3,304.42 | 0.0056 (75x75 µm) | 1,826.0 | 610 | `+0.000 ns` | **0** | **0 (Clean)** | 🏆 **TAPE-OUT READY** |
+| **`uart_tx`** | 115200 Baud Serial Transmitter | 169 | 863 | 6,761.48 | 0.0100 (100x100 µm) | 3,321.0 | 1,254 | `+0.000 ns` | **0** | **0 (Clean)** | 🏆 **TAPE-OUT READY** |
+| **`sync_fifo`** | 8-bit x 16-Entry Circular FIFO | 573 | 2,954 | 20,206.88 | 0.0256 (160x160 µm) | 21,219.0 | 5,823 | `+0.000 ns` | **0** | **0 (Clean)** | 🏆 **TAPE-OUT READY** |
+| **`counter_sync`**| 8-bit Up/Down Loadable Counter | 70 | 644 | 5,348.88 | 0.0081 (90x90 µm) | 2,544.0 | 700 | `+0.000 ns` | **0** | **0 (Clean)** | 🏆 **TAPE-OUT READY** |
+| **`pwm_generator`**| 8-bit Dual-Buffered PWM Engine | 152 | 860 | 6,761.48 | 0.0100 (100x100 µm) | 4,314.0 | 1,395 | `+0.000 ns` | **0** | **0 (Clean)** | 🏆 **TAPE-OUT READY** |
+
+---
+
+## 🎨 Physical Silicon Layout Gallery
+
+High-resolution KLayout renders generated headlessly in WSL2 using the SkyWater 130nm technology stack (`sky130A.lyp`):
+
+| Design | Die Macro Layout (2048x1536) | Placed Standard Cells (Zoomed) |
+|:---:|:---:|:---:|
+| **`alu4bit`**<br>(4-bit ALU) | ![alu4bit Layout](outputs/alu4bit/images/alu4bit_layout.png) | ![alu4bit Zoom](outputs/alu4bit/images/alu4bit_gds_zoomed.png) |
+| **`uart_tx`**<br>(115200 Baud UART) | ![uart_tx Layout](outputs/uart_tx/images/uart_tx_layout.png) | ![uart_tx Zoom](outputs/uart_tx/images/uart_tx_gds_zoomed.png) |
+| **`sync_fifo`**<br>(Synchronous FIFO) | ![sync_fifo Layout](outputs/sync_fifo/images/sync_fifo_layout.png) | ![sync_fifo Zoom](outputs/sync_fifo/images/sync_fifo_gds_zoomed.png) |
+| **`counter_sync`**<br>(8-bit Counter) | ![counter_sync Layout](outputs/counter_sync/images/counter_sync_layout.png) | ![counter_sync Zoom](outputs/counter_sync/images/counter_sync_gds_zoomed.png) |
+| **`pwm_generator`**<br>(8-bit Dual-Buffer PWM) | ![pwm_generator Layout](outputs/pwm_generator/images/pwm_generator_layout.png) | ![pwm_generator Zoom](outputs/pwm_generator/images/pwm_generator_gds_zoomed.png) |
+
+---
+
+## 🔄 Autonomous Closed-Loop Self-Healing ECO Loop
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant LLM as RTLCoderAgent / LLM
+    participant Linter as Verilator Linter
+    participant ECO_Lint as LintECOAgent
+    participant Sim as Icarus Verilog
+    participant ECO_Sim as SimECOAgent
+    participant Synth as Yosys & OpenSTA
+
+    LLM->>Linter: Synthesizable Verilog Code
+    alt Lint Error Detected (ANSI redeclaration, undeclared net)
+        Linter-->>ECO_Lint: Raw AST Error Diagnostic
+        ECO_Lint->>LLM: Sliced Error Prompt + Surgical Correction Rule
+        LLM->>Linter: Re-synthesized Verilog
+    end
+    Linter-->>Sim: Verilog Passes (0 Lint Warnings)
+    Sim->>Sim: Compile & Run Testbench Assertions
+    alt Assertion Regression Detected
+        Sim-->>ECO_Sim: Sliced Simulation Failure Trace ([FAIL])
+        ECO_Sim->>LLM: Behavioral Prompt + Synchronous Clock Disciplines
+        LLM->>Sim: Autonomous RTL / Testbench Repair
+    end
+    Sim-->>Synth: 100% Assertion Passes
+    Synth->>Synth: Yosys Gate Mapping & OpenSTA Timing Closure
+```
+
+### Key Framework Resilience Innovations
+1. **Multi-Account Round-Robin Key Pool:** Automatically cycles across multiple Groq, NVIDIA NIM, OpenRouter, and Gemini keys with 1.5s rate-limit backoffs.
+2. **Synchronous Clock Sampling Discipline:** Enforces strict `@(posedge clk); #1;` strobe timing in testbenches to eliminate race conditions between clock edges and signal assertions.
+3. **Syntax Regression Rollback Protection:** If an LLM behavioral fix introduces syntax regressions, the agent automatically detects the rollback threshold and reverts to the clean syntax baseline.
+4. **Context-Compacted Error Slicing:** Filters raw EDA compiler dumps by >65% to pass only essential failure signatures, preventing token exhaustion and prompt dilution.
+
+---
+
+## 🔬 Silicon3D: Interactive 3D GDSII Silicon Visualizer
+
+SiliconFlow-AI includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js:
+
+[![Launch Silicon3D Visualizer](https://img.shields.io/badge/Launch-Silicon3D_Visualizer-blue?style=for-the-badge&logo=webgl)](tools/gds3d-viewer/index.html)
+
+- **Pure JavaScript Binary GDSII Stream Parser:** Direct ArrayBuffer decoding of records, IBM excess-64 floating point data, and cell hierarchy trees.
+- **Authentic SkyWater 130nm Stackup:** Accurately renders physical metallization and diffusion layers (`nwell`, `diff`, `poly`, `li1`, `m1`–`m5`, contacts, vias, and pads).
+- **Interactive 3D Exploded View:** Dynamic Z-axis spacing slider ($1.0\times$ to $10.0\times$) to inspect inter-metal routing channels and vias.
+- **Cross-Section Slicing:** Real-time hardware clipping planes along X, Y, and Z axes.
+- **Micro-Metric Measurement Ruler:** Measure Euclidean distance, $\Delta X$, and $\Delta Y$ in microns ($\mu m$).
+
+Launch directly in your browser:
+```bash
+# Windows
+start tools/gds3d-viewer/index.html
+
+# macOS / Linux
+open tools/gds3d-viewer/index.html || xdg-open tools/gds3d-viewer/index.html
+```
+
+---
+
+## 🚀 Quickstart & Usage
+
+### 1. Environment Setup
 ```bash
 git clone https://github.com/S-SUJAN-S/rtl2gds.git
 cd rtl2gds
 cp .env.example .env
 ```
 
-### 2. Configure a Free API Key (Choose Either):
-Edit `.env` or export in your terminal:
-* **Option A: Groq Cloud (Recommended: 500+ tokens/sec)**  
-  Get a free key at [console.groq.com/keys](https://console.groq.com/keys):
-  ```bash
-  export GROQ_API_KEY="gsk_..."
-  ```
-* **Option B: Google Gemini (1M token context free tier)**  
-  Get a free key at [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey):
-  ```bash
-  export GEMINI_API_KEY="AIza..."
-  ```
+Configure your API keys in `.env` (Groq, Gemini, OpenRouter, or NVIDIA NIM). Multi-account keys are automatically pooled:
+```env
+GROQ_API_KEY_1=gsk_...
+GROQ_API_KEY_2=gsk_...
+GEMINI_API_KEY_1=AIza...
+OPENROUTER_API_KEY_1=sk-or-...
+```
 
-### 3. Run the Autonomous Pipeline
-Synthesize any pre-configured design:
+### 2. Verify EDA Toolchain & Model Router
 ```bash
-# Run ALU through lint, simulation, synthesis, and STA signoff
-python run_pipeline.py --design alu4bit --provider groq
+# Test multi-account round-robin key pool & failover
+python -m unittest tests/test_model_router_pool.py -v
 
-# Run UART Transceiver targeting 100MHz
-python run_pipeline.py --design uart_tx --provider gemini
+# Test WSL2 open-source EDA binaries (Verilator, Icarus, Yosys, KLayout)
+python -m unittest tests/test_eda_toolchain.py -v
+```
 
-# Execute full 4-design canonical benchmark suite
+### 3. Run Benchmark Regression Sweep
+```bash
+# Run canonical 4-design regression suite (ALU, UART, FIFO, Full Adder)
 python run_pipeline.py --test-all
 ```
 
-### 4. Synthesize from Natural Language Prompt
+### 4. Synthesize Custom Hardware from Natural Language
 ```bash
-python run_pipeline.py --design custom_counter --prompt "8-bit up-down counter with synchronous reset, enable, and overflow flag"
+# Synthesize custom parameterized hardware
+python run_pipeline.py --design counter_sync --prompt "8-bit up-down counter with synchronous reset, load, enable, and terminal count flag"
+```
+
+### 5. Drive Physical Layout (RTL-to-GDSII) via OpenLane Docker
+```bash
+# Execute physical floorplanning, placement, CTS, routing, DRC/LVS, and KLayout rendering
+python scripts/run_openlane_physical_flow.py --design alu4bit
 ```
 
 ---
 
-## 📊 Outputs & Artifacts
+## 🛠️ Toolchain Environment
 
-After each run, inspection artifacts are exported directly to `outputs/pipeline_runs/<design>/<timestamp>/`:
-* `<design>.v` — Clean synthesizable Verilog RTL
-* `<design>_tb.v` — Self-checking verification testbench
-* `<design>_netlist.v` — Mapped gate-level netlist
-* `<design>.sdc` — Synopsys/Cadence timing constraints
-* `<design>_sta.rpt` — Full path slack report
-* `dashboard.html` — Interactive dark-mode silicon health dashboard
-* `signoff_report.md` — Formal tapeout readiness summary
-
----
-
-## 🔬 Silicon3D: Interactive 3D GDSII Silicon Layout Visualizer
-
-SiliconFlow-AI includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js and custom binary stream parsing:
-
-[![Interactive 3D GDSII Silicon Visualizer](https://img.shields.io/badge/Launch-Silicon3D_Visualizer-blue?style=for-the-badge&logo=webgl)](tools/gds3d-viewer/index.html)
-
-### 🌟 Key Visualizer Capabilities
-* **100% Client-Side WebGL:** Runs completely in the browser with zero backend server required.
-* **Pure JS Binary GDSII Stream Parser:** Direct ArrayBuffer parser decoding records, IBM excess-64 floating point units, and cell hierarchy flattening.
-* **Authentic SkyWater 130nm Stackup:** Accurately renders physical metallization and diffusion layers (`nwell`, `diff`, `poly`, `li1`, `m1`–`m5`, taps, implantation, pads, and die boundary).
-* **Interactive 3D Exploded View:** Dynamic Z-axis spacing slider ($1.0\times$ to $10.0\times$) to inspect inter-metal routing channels and vias.
-* **2D CAD / 3D Perspective Mode:** Seamless toggle between top-down orthographic CAD layout view and 3D orbiting perspective.
-* **Cross-Section Slicing:** Dynamic X, Y, and Z clipping planes with real-time hardware slicing into the silicon core.
-* **Silicon Measurement Ruler:** Click two points to measure Euclidean distance, $\Delta X$, and $\Delta Y$ in microns ($\mu m$).
-* **Asset & Snapshot Export:** Export layout to binary `.glb` 3D models or capture 4K PNG snapshots.
-* **Drag-and-Drop & Deep-Linking:** Drop any `.gds` layout directly into the browser or deep-link with `?demo=alu4bit`, `?demo=full_adder`, `?demo=uart_top`, or `?url=<gds_url>`.
-
-### 🚀 Launching the Visualizer
-Simply open `tools/gds3d-viewer/index.html` in any modern web browser:
-```bash
-# Option 1: Open directly in your default browser
-# Windows:
-start tools/gds3d-viewer/index.html
-# macOS:
-open tools/gds3d-viewer/index.html
-# Linux:
-xdg-open tools/gds3d-viewer/index.html
-
-# Option 2: Serve locally via Python
-python -m http.server 8000
-# Then open: http://localhost:8000/tools/gds3d-viewer/
-```
-
----
-
-## 🛠️ Toolchain Prerequisites (Physical Execution)
-
-* **Python:** 3.10+ (Standard library only; zero mandatory third-party packages)
-* **EDA Tools (via WSL or Native Linux):**
-  - **Verilator** (`verilator --lint-only`)
-  - **Icarus Verilog** (`iverilog`, `vvp`)
-  - **Yosys** (Open-source synthesis)
-  - **OpenSTA / OpenROAD** (Timing and physical design)
-  - **KLayout** (GDSII layout inspection)
+* **Python:** 3.10+ (Standard library only; zero mandatory third-party pip dependencies)
+* **EDA Toolchain (WSL2 Ubuntu 22.04 LTS / Native Linux):**
+  - **Verilator:** `5.032` (Static AST linter)
+  - **Icarus Verilog:** `12.0` (Verilog simulation compiler)
+  - **VVP:** `12.0` (Simulation runtime)
+  - **Yosys:** `0.52` (Logic synthesis)
+  - **OpenSTA:** `2.5.0` (Static timing analysis)
+  - **KLayout:** `0.30.0` (GDSII layout inspection & headless rendering)
+  - **OpenLane:** `v0.9+` Docker container (SkyWater 130nm PDK)
 
 ---
 
 ## 👨‍💻 Author & Attribution
 
-Developed by **Sujan S**  
-Independent Hardware AI & Autonomous EDA Researcher  
-- **GitHub:** [@S-SUJAN-S](https://github.com/S-SUJAN-S)  
-- **Portfolio Repository:** [rtl2gds](https://github.com/S-SUJAN-S/rtl2gds)
+**Sujan S** ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
+*Independent Hardware AI & Autonomous EDA Researcher*  
+- **GitHub:** [https://github.com/S-SUJAN-S](https://github.com/S-SUJAN-S)  
+- **Project Repository:** `rtl-2-gds-automation-local-llm` (SiliconFlow-AI)  
 
 ---
 

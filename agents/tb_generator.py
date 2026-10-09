@@ -51,7 +51,9 @@ CRITICAL RULES (VIOLATING ANY WILL CAUSE SIMULATION FAILURE):
 4. USE NON-BLOCKING ASSIGNMENTS (<=) for all reg stimulus in clocked initial/always blocks.
 5. Initialize ALL stimulus regs to 0 at time 0.
 6. Do NOT use SystemVerilog '$sformatf' or string variables. Use direct string literals inside $display.
-7. Return ONLY the raw Verilog testbench code. No markdown fences, no commentary."""
+7. In standard Verilog, tasks CANNOT contain 'return;' statements. Never write 'return;' inside tasks.
+8. SYNCHRONOUS OUTPUT SAMPLING: In sequential/clocked designs, outputs update on the clock edge. Always wait for `@(posedge clk); #1;` after applying stimulus before checking/asserting output values. Never sample before the clock edge.
+9. Return ONLY the raw Verilog testbench code. No markdown fences, no commentary."""
 
 SYSTEM_AXI = SYSTEM_BASE + """
 
@@ -94,6 +96,44 @@ ALU TESTBENCH PATTERN:
 - Use #10 delay between tests to let combinational logic settle before checking.
 - Increment passed_tests and total_tests for each test case."""
 
+SYSTEM_PWM = SYSTEM_BASE + """
+
+PWM TESTBENCH PATTERN:
+- Declare DUT inputs as reg: reg clk, rst; reg [7:0] duty, period;
+- Declare DUT output as wire: wire pwm_out;
+- Clock generator: always #5 clk = ~clk; (100MHz clock)
+- Reset sequence: rst = 1; duty = 0; period = 10; #20; rst = 0; #10;
+- Verification strategy for PWM:
+  Do NOT sample single instantaneous cycles.
+  Measure duty cycle over one complete period by counting high clock cycles:
+  Example task:
+    task check_duty;
+      input [7:0] t_duty;
+      input [7:0] t_period;
+      integer i, high_count;
+      begin
+        duty <= t_duty; period <= t_period;
+        repeat(2 * t_period + 4) @(posedge clk);
+        high_count = 0;
+        for (i = 0; i < t_period; i = i + 1) begin
+          @(posedge clk);
+          if (pwm_out) high_count = high_count + 1;
+        end
+        total_tests = total_tests + 1;
+        if (high_count == t_duty) begin
+          passed_tests = passed_tests + 1;
+          $display("[PASS] Test %0d: duty=%0d period=%0d high_count=%0d", total_tests, t_duty, t_period, high_count);
+        end else begin
+          $display("[FAIL] Test %0d: duty=%0d period=%0d Expected=%0d Got=%0d", total_tests, t_duty, t_period, t_duty, high_count);
+        end
+      end
+    endtask
+- Test representative duty cycles:
+  check_duty(8'd5, 8'd10);  // 50%
+  check_duty(8'd2, 8'd10);  // 20%
+  check_duty(8'd0, 8'd10);  // 0%
+  check_duty(8'd10, 8'd10); // 100%"""
+
 PROTOCOL_SYSTEMS = {
     "AXI": SYSTEM_AXI,
     "AXI4": SYSTEM_AXI,
@@ -101,6 +141,7 @@ PROTOCOL_SYSTEMS = {
     "UART": SYSTEM_UART,
     "FIFO": SYSTEM_FIFO,
     "ALU": SYSTEM_ALU,
+    "PWM": SYSTEM_PWM,
     "custom": SYSTEM_BASE,
 }
 
@@ -274,6 +315,11 @@ Output ONLY the Verilog testbench code."""
                             line = "    ; // AUTO-NEUTRALIZED illegal write to output: " + line.strip()
                             warnings.append(f"Line {i+1}: Illegal l-value assignment to DUT output '{out_port}' neutralized")
                             break
+
+            # Neutralize illegal 'return' statement in tasks/functions (SystemVerilog construct not allowed in Verilog tasks)
+            if re.match(r'^\s*return\s*;', stripped):
+                line = "    ; // AUTO-NEUTRALIZED illegal return: " + stripped
+                warnings.append(f"Line {i+1}: Neutralized illegal 'return' in testbench task")
 
             # Convert simple blocking literal assignments to non-blocking in initial blocks
             if re.search(r'\b\w+\s*=\s*\d+\'[bBhHdD]', stripped):

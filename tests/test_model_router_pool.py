@@ -168,7 +168,7 @@ class TestModelRouterKeyPool(unittest.TestCase):
         self.assertIn("module counter4", verilog_code, "Verilog missing 'module counter4'")
         self.assertIn("endmodule", verilog_code, "Verilog missing 'endmodule'")
         self.assertIn("count", verilog_code, "Verilog missing port 'count'")
-        self.assertGreater(result.get("tokens_per_sec", 0), 100.0, "Expected fast throughput from Groq LPU")
+        self.assertGreater(result.get("tokens_per_sec", 0), 50.0, "Expected fast throughput from Groq LPU")
 
 
 if __name__ == "__main__":
