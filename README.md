@@ -5,6 +5,7 @@
 [![EDA: OpenLane & Yosys](https://img.shields.io/badge/EDA-OpenLane%20%7C%20Yosys%20%7C%20OpenROAD-green.svg)](https://github.com/The-OpenROAD-Project)
 [![AI Engine: Groq & Gemini](https://img.shields.io/badge/AI%20Engine-Groq%20%7C%20Gemini%20%7C%20OpenRouter-purple.svg)](https://console.groq.com)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![3D Silicon Viewer](https://img.shields.io/badge/Interactive_3D_GDSII-Silicon_Viewer-blue?logo=webgl)](tools/gds3d-viewer/index.html)
 
 **SiliconFlow-AI** is an enterprise-grade autonomous physical design platform that bridges generative AI with production Electronic Design Automation (EDA) toolchains. It automatically takes natural language specifications or Verilog RTL, performs closed-loop lint and simulation repair, drives logic synthesis on the **SkyWater 130nm (sky130)** PDK, enforces static timing closure, and outputs manufacturable GDSII silicon masks.
 
@@ -160,6 +161,41 @@ After each run, inspection artifacts are exported directly to `outputs/pipeline_
 * `<design>_sta.rpt` — Full path slack report
 * `dashboard.html` — Interactive dark-mode silicon health dashboard
 * `signoff_report.md` — Formal tapeout readiness summary
+
+---
+
+## 🔬 Silicon3D: Interactive 3D GDSII Silicon Layout Visualizer
+
+SiliconFlow-AI includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js and custom binary stream parsing:
+
+[![Interactive 3D GDSII Silicon Visualizer](https://img.shields.io/badge/Launch-Silicon3D_Visualizer-blue?style=for-the-badge&logo=webgl)](tools/gds3d-viewer/index.html)
+
+### 🌟 Key Visualizer Capabilities
+* **100% Client-Side WebGL:** Runs completely in the browser with zero backend server required.
+* **Pure JS Binary GDSII Stream Parser:** Direct ArrayBuffer parser decoding records, IBM excess-64 floating point units, and cell hierarchy flattening.
+* **Authentic SkyWater 130nm Stackup:** Accurately renders physical metallization and diffusion layers (`nwell`, `diff`, `poly`, `li1`, `m1`–`m5`, taps, implantation, pads, and die boundary).
+* **Interactive 3D Exploded View:** Dynamic Z-axis spacing slider ($1.0\times$ to $10.0\times$) to inspect inter-metal routing channels and vias.
+* **2D CAD / 3D Perspective Mode:** Seamless toggle between top-down orthographic CAD layout view and 3D orbiting perspective.
+* **Cross-Section Slicing:** Dynamic X, Y, and Z clipping planes with real-time hardware slicing into the silicon core.
+* **Silicon Measurement Ruler:** Click two points to measure Euclidean distance, $\Delta X$, and $\Delta Y$ in microns ($\mu m$).
+* **Asset & Snapshot Export:** Export layout to binary `.glb` 3D models or capture 4K PNG snapshots.
+* **Drag-and-Drop & Deep-Linking:** Drop any `.gds` layout directly into the browser or deep-link with `?demo=alu4bit`, `?demo=full_adder`, `?demo=uart_top`, or `?url=<gds_url>`.
+
+### 🚀 Launching the Visualizer
+Simply open `tools/gds3d-viewer/index.html` in any modern web browser:
+```bash
+# Option 1: Open directly in your default browser
+# Windows:
+start tools/gds3d-viewer/index.html
+# macOS:
+open tools/gds3d-viewer/index.html
+# Linux:
+xdg-open tools/gds3d-viewer/index.html
+
+# Option 2: Serve locally via Python
+python -m http.server 8000
+# Then open: http://localhost:8000/tools/gds3d-viewer/
+```
 
 ---
 
