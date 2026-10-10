@@ -1,4 +1,4 @@
-# SiliconFlow-AI: Autonomous RTL-to-GDSII EDA Framework 🚀
+# rtl2gds: Autonomous RTL-to-GDSII EDA Framework (SiliconFlow-AI) 🚀
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PDK: SkyWater 130nm](https://img.shields.io/badge/PDK-SkyWater%20130nm-orange.svg)](https://github.com/google/skywater-pdk)
@@ -7,13 +7,13 @@
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Interactive 3D GDSII Viewer](https://img.shields.io/badge/Interactive_3D_GDSII-Silicon_Viewer-blue?logo=webgl)](tools/gds3d-viewer/index.html)
 
-**SiliconFlow-AI** is a production-grade autonomous digital ASIC physical design framework that unites Large Language Model (LLM) agents with native Electronic Design Automation (EDA) engines. The system autonomously translates natural language microarchitecture specifications into synthesizable Verilog RTL, executes closed-loop lint and simulation self-healing, conducts logic synthesis and static timing analysis targeting the **SkyWater 130nm (`sky130_fd_sc_hd`)** PDK, and drives the complete **OpenLane** place-and-route containerized flow to stream out DRC/LVS-clean, tapeout-ready GDSII silicon layouts.
+**rtl2gds (SiliconFlow-AI)** is an autonomous digital ASIC physical design framework that unites Large Language Model (LLM) agents with native Electronic Design Automation (EDA) engines. The system autonomously translates natural language microarchitecture specifications into synthesizable Verilog RTL, executes closed-loop lint and simulation self-healing, conducts logic synthesis and static timing analysis targeting the **SkyWater 130nm (`sky130_fd_sc_hd`)** PDK, and drives the complete **OpenLane** place-and-route containerized flow to stream out DRC/LVS-clean, tapeout-ready GDSII silicon layouts.
 
 ---
 
 ## 🏛️ Autonomous Multi-Agent Architecture
 
-SiliconFlow-AI structures the ASIC design flow into specialized autonomous agents connected by closed-loop Evaluator-Optimizer feedback cycles:
+The ASIC design flow is structured into specialized autonomous agents connected by closed-loop Evaluator-Optimizer feedback cycles:
 
 ```mermaid
 flowchart TD
@@ -92,36 +92,65 @@ High-resolution KLayout renders generated headlessly in WSL2 using the SkyWater 
 
 ---
 
-## 🔄 Autonomous Closed-Loop Self-Healing ECO Loop
+## 🔄 Autonomous Closed-Loop Self-Healing Flow
+
+The closed-loop architecture autonomously isolates and heals syntax, semantic, and verification faults in a multi-stage feedback cycle:
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    participant LLM as RTLCoderAgent / LLM
-    participant Linter as Verilator Linter
-    participant ECO_Lint as LintECOAgent
-    participant Sim as Icarus Verilog
-    participant ECO_Sim as SimECOAgent
-    participant Synth as Yosys & OpenSTA
+flowchart TD
+    classDef startNode fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef processNode fill:#0f172a,stroke:#64748b,stroke-width:1.5px,color:#f1f5f9;
+    classDef checkNode fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ffffff;
+    classDef ecoLoop fill:#451a03,stroke:#f97316,stroke-width:2px,color:#fed7aa;
+    classDef passNode fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#a7f3d0;
+    classDef tapeoutNode fill:#14532d,stroke:#22c55e,stroke-width:2.5px,color:#dcfce7;
 
-    LLM->>Linter: Synthesizable Verilog Code
-    alt Lint Error Detected (ANSI redeclaration, undeclared net)
-        Linter-->>ECO_Lint: Raw AST Error Diagnostic
-        ECO_Lint->>LLM: Sliced Error Prompt + Surgical Correction Rule
-        LLM->>Linter: Re-synthesized Verilog
+    START["1. Natural Language Spec / Micro-Architecture Contract"]:::startNode
+    GEN_RTL["2. RTLCoderAgent: Synthesizable Verilog Generation"]:::processNode
+    
+    START --> GEN_RTL
+    GEN_RTL --> LINT_CHECK
+
+    subgraph Loop1 ["🔁 ECO LOOP 1: AST Syntax Self-Healing"]
+        LINT_CHECK{"Verilator AST Linter\n(--lint-only)"}:::checkNode
+        LINT_FAIL["Syntax / ANSI Port / Undeclared Net Errors"]:::ecoLoop
+        LINT_ECO["LintECOAgent:\nExtract Compiler AST & Surgical Patch"]:::ecoLoop
+        
+        LINT_CHECK -- "Syntax Errors" --> LINT_FAIL
+        LINT_FAIL --> LINT_ECO
+        LINT_ECO -- "Auto-Patch Verilog" --> GEN_RTL
     end
-    Linter-->>Sim: Verilog Passes (0 Lint Warnings)
-    Sim->>Sim: Compile & Run Testbench Assertions
-    alt Assertion Regression Detected
-        Sim-->>ECO_Sim: Sliced Simulation Failure Trace ([FAIL])
-        ECO_Sim->>LLM: Behavioral Prompt + Synchronous Clock Disciplines
-        LLM->>Sim: Autonomous RTL / Testbench Repair
+
+    LINT_CHECK -- "0 Errors (Clean AST)" --> TB_GEN
+
+    TB_GEN["3. TBGeneratorAgent: Self-Checking Testbench + Watchdogs"]:::processNode
+    TB_GEN --> SIM_CHECK
+
+    subgraph Loop2 ["🔁 ECO LOOP 2: Functional Regression Self-Healing"]
+        SIM_CHECK{"Icarus Verilog Simulation\n(iverilog + vvp)"}:::checkNode
+        SIM_FAIL["Assertion Failed / Logic Regression"]:::ecoLoop
+        SIM_ECO["SimECOAgent:\nFault Classification & Rollback Guard"]:::ecoLoop
+        
+        SIM_CHECK -- "Assertion Failure" --> SIM_FAIL
+        SIM_FAIL --> SIM_ECO
+        SIM_ECO -- "Auto-Repair RTL / TB" --> TB_GEN
     end
-    Sim-->>Synth: 100% Assertion Passes
-    Synth->>Synth: Yosys Gate Mapping & OpenSTA Timing Closure
+
+    SIM_CHECK -- "100% Assertions Passed" --> SYNTH
+
+    subgraph Signoff ["🏭 ASIC Synthesis & Physical Signoff"]
+        SYNTH["4. Yosys Logic Synthesis (SkyWater 130nm Gate Mapping)"]:::processNode
+        STA["5. OpenSTA Static Timing Analysis (Closure @ 100 MHz)"]:::processNode
+        OPENLANE["6. OpenLane Containerized P&R (Floorplan, Placement, CTS, Routing)"]:::passNode
+        GDS["🏆 Tapeout Signoff: DRC/LVS-Clean GDSII Silicon Mask"]:::tapeoutNode
+        
+        SYNTH --> STA
+        STA --> OPENLANE
+        OPENLANE --> GDS
+    end
 ```
 
-### Key Framework Resilience Innovations
+### Framework Resilience Features
 1. **Multi-Account Round-Robin Key Pool:** Automatically cycles across multiple Groq, NVIDIA NIM, OpenRouter, and Gemini keys with 1.5s rate-limit backoffs.
 2. **Synchronous Clock Sampling Discipline:** Enforces strict `@(posedge clk); #1;` strobe timing in testbenches to eliminate race conditions between clock edges and signal assertions.
 3. **Syntax Regression Rollback Protection:** If an LLM behavioral fix introduces syntax regressions, the agent automatically detects the rollback threshold and reverts to the clean syntax baseline.
@@ -131,7 +160,7 @@ sequenceDiagram
 
 ## 🔬 Silicon3D: Interactive 3D GDSII Silicon Visualizer
 
-SiliconFlow-AI includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js:
+The project includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js:
 
 [![Launch Silicon3D Visualizer](https://img.shields.io/badge/Launch-Silicon3D_Visualizer-blue?style=for-the-badge&logo=webgl)](tools/gds3d-viewer/index.html)
 
@@ -209,15 +238,6 @@ python scripts/run_openlane_physical_flow.py --design alu4bit
   - **OpenSTA:** `2.5.0` (Static timing analysis)
   - **KLayout:** `0.30.0` (GDSII layout inspection & headless rendering)
   - **OpenLane:** `v0.9+` Docker container (SkyWater 130nm PDK)
-
----
-
-## 👨‍💻 Author & Attribution
-
-**Sujan S** ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
-*Independent Hardware AI & Autonomous EDA Researcher*  
-- **GitHub:** [https://github.com/S-SUJAN-S](https://github.com/S-SUJAN-S)  
-- **Project Repository:** `rtl-2-gds-automation-local-llm` (SiliconFlow-AI)  
 
 ---
 
