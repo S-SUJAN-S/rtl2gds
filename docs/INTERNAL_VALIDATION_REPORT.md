@@ -1,12 +1,9 @@
 # SiliconFlow-AI: Comprehensive 5-Design ASIC Benchmark & RTL-to-GDSII Physical Signoff Report
 
-**Author & Principal Architect:** Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
-**Title:** Independent Hardware AI & Autonomous EDA Researcher  
-**Project:** `rtl-2-gds-automation-local-llm` (SiliconFlow-AI)  
+**Project:** `rtl2gds` (SiliconFlow-AI)  
 **Date:** October 9, 2026  
 **Status:** 🏆 **100% REGRESSION PASS — 5/5 ASIC DESIGNS PHYSICALLY SIGNED OFF & GDSII STREAMED OUT**  
 **PDK:** SkyWater 130nm High-Density (`sky130_fd_sc_hd`)  
-**Repository Policy:** Strictly Private • Local Workspace Only • Independent Attribution • Zero Institutional References  
 
 ---
 
@@ -130,13 +127,12 @@ The autonomous closed-loop feedback engine demonstrated complete error recovery 
 
 ---
 
-## 5. Compliance & Author Attribution
+## 5. Repository & Architecture Verification
 
-1. **Independent Attribution:** SiliconFlow-AI is designed, engineered, and maintained solely by **Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))** as an independent hardware AI & autonomous EDA researcher. Zero university, college, or institutional affiliations are present.
-2. **Repository Protection:** The repository is strictly private. All verification artifacts, physical layouts, and test scripts reside locally.
+1. **Autonomous Execution:** All RTL generation, verification testbenches, and physical PPA milestones were executed through native open-source EDA engines (Verilator, Icarus Verilog, Yosys, OpenSTA, OpenLane).
+2. **Reproducibility:** All verification artifacts, physical layouts, and test scripts are fully reproducible from the repository test suites.
 
 ---
 
-**Signoff Approval:** Sujan S  
 **Date:** October 9, 2026  
 **Final Silicon Verdict:** 🏆 **TAPE-OUT READY — ALL 5 ASIC DESIGNS PHYSICALLY SIGNED OFF (0 DRC / 0 LVS / TIMING CLOSED)**

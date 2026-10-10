@@ -1,8 +1,7 @@
 # SiliconFlow-AI: YouTube Video Showcase & Technical Demo Script 🎥
 
-**Project:** `rtl-2-gds-automation-local-llm` (SiliconFlow-AI)  
-**Author & Presenter:** Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
-**Title:** Independent Hardware AI & Autonomous EDA Researcher  
+**Project:** `rtl2gds` (SiliconFlow-AI)  
+**Author:** Sujan S ([@S-SUJAN-S](https://github.com/S-SUJAN-S))  
 **Target Channel:** BlinkNBuild ([@BlinkNBuild](https://youtube.com/@BlinkNBuild))  
 **Format:** 1080p 60fps Technical Walkthrough / Screen Recording + Voiceover  
 **Target Runtime:** 3 Minutes (180 Seconds)  
@@ -40,7 +39,6 @@ From a simple natural language prompt, the framework autonomously:
 - Configurable Dual-Buffer PWM (pwm_generator)
 
 Built & Engineered by Sujan S (@S-SUJAN-S).
-Independent Hardware AI & Autonomous EDA Researcher.
 ```
 
 ---
@@ -109,7 +107,7 @@ timeline
 ---
 
 ### Act 5: Benchmark Matrix & Conclusion (2:30 – 3:00)
-* **Visual:** Clean full-screen graphic of the 5-Design Benchmark Matrix showing `alu4bit`, `uart_tx`, `sync_fifo`, `counter_sync`, and `pwm_generator`, all with green 🏆 TAPE-OUT READY badges, 0 DRC, and positive timing slack. Then display author card: Sujan S (@S-SUJAN-S).
+* **Visual:** Clean full-screen graphic of the 5-Design Benchmark Matrix showing `alu4bit`, `uart_tx`, `sync_fifo`, `counter_sync`, and `pwm_generator`, all with green 🏆 TAPE-OUT READY badges, 0 DRC, and positive timing slack. Then display repository link: https://github.com/S-SUJAN-S/rtl2gds.
 * **Audio / Voiceover:**  
   *"We didn't just test one design. We ran an exhaustive regression sweep across five distinct ASIC blocks: a 4-bit ALU, a 115200 baud UART transmitter, a circular FIFO, a synchronous counter, and a dual-buffered PWM engine.  
   Every single one achieved 100% physical signoff with zero DRC defects and closed timing at 100 MHz.  
