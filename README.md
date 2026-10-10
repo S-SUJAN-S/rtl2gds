@@ -5,7 +5,6 @@
 [![EDA: OpenLane & Yosys](https://img.shields.io/badge/EDA-OpenLane%20%7C%20Yosys%20%7C%20OpenROAD-green.svg)](https://github.com/The-OpenROAD-Project)
 [![AI Engine: Groq & Gemini](https://img.shields.io/badge/AI%20Engine-Groq%20%7C%20Gemini%20%7C%20OpenRouter-purple.svg)](https://console.groq.com)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Interactive 3D GDSII Viewer](https://img.shields.io/badge/Interactive_3D_GDSII-Silicon_Viewer-blue?logo=webgl)](tools/gds3d-viewer/index.html)
 
 **rtl2gds (SiliconFlow-AI)** is an autonomous digital ASIC physical design framework that unites Large Language Model (LLM) agents with native Electronic Design Automation (EDA) engines. The system autonomously translates natural language microarchitecture specifications into synthesizable Verilog RTL, executes closed-loop lint and simulation self-healing, conducts logic synthesis and static timing analysis targeting the **SkyWater 130nm (`sky130_fd_sc_hd`)** PDK, and drives the complete **OpenLane** place-and-route containerized flow to stream out DRC/LVS-clean, tapeout-ready GDSII silicon layouts.
 
@@ -44,7 +43,7 @@ flowchart TD
         P --> Q["Detailed Routing\n(TritonRoute)"]
         Q --> R{"Physical Signoff\nMagic DRC & Netgen LVS"}
         R -- "Zero Violations" --> S["GDSII Streamout\n(.gds Silicon Binary)"]
-        S --> T["Silicon3D WebGL Viewer\n(Client-Side Inspection)"]
+        S --> T["KLayout Layout Streamout\n(GDSII Silicon Verification)"]
     end
 ```
 
@@ -155,29 +154,6 @@ flowchart TD
 2. **Synchronous Clock Sampling Discipline:** Enforces strict `@(posedge clk); #1;` strobe timing in testbenches to eliminate race conditions between clock edges and signal assertions.
 3. **Syntax Regression Rollback Protection:** If an LLM behavioral fix introduces syntax regressions, the agent automatically detects the rollback threshold and reverts to the clean syntax baseline.
 4. **Context-Compacted Error Slicing:** Filters raw EDA compiler dumps by >65% to pass only essential failure signatures, preventing token exhaustion and prompt dilution.
-
----
-
-## 🔬 Silicon3D: Interactive 3D GDSII Silicon Visualizer
-
-The project includes a zero-dependency, 100% client-side WebGL 3D GDSII silicon layout visualizer built with Three.js:
-
-[![Launch Silicon3D Visualizer](https://img.shields.io/badge/Launch-Silicon3D_Visualizer-blue?style=for-the-badge&logo=webgl)](tools/gds3d-viewer/index.html)
-
-- **Pure JavaScript Binary GDSII Stream Parser:** Direct ArrayBuffer decoding of records, IBM excess-64 floating point data, and cell hierarchy trees.
-- **Authentic SkyWater 130nm Stackup:** Accurately renders physical metallization and diffusion layers (`nwell`, `diff`, `poly`, `li1`, `m1`–`m5`, contacts, vias, and pads).
-- **Interactive 3D Exploded View:** Dynamic Z-axis spacing slider ($1.0\times$ to $10.0\times$) to inspect inter-metal routing channels and vias.
-- **Cross-Section Slicing:** Real-time hardware clipping planes along X, Y, and Z axes.
-- **Micro-Metric Measurement Ruler:** Measure Euclidean distance, $\Delta X$, and $\Delta Y$ in microns ($\mu m$).
-
-Launch directly in your browser:
-```bash
-# Windows
-start tools/gds3d-viewer/index.html
-
-# macOS / Linux
-open tools/gds3d-viewer/index.html || xdg-open tools/gds3d-viewer/index.html
-```
 
 ---
 

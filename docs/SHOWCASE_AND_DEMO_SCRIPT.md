@@ -51,14 +51,14 @@ timeline
     00:00 - 00:30 : The Hook & Silicon Bottleneck
     00:30 - 01:00 : Architecture & The 7-Agent Swarm
     01:00 - 01:45 : Live Execution & Self-Healing ECO Demo
-    01:45 - 02:30 : OpenLane Tapeout, GDSII & Silicon3D WebGL
+    01:45 - 02:30 : OpenLane Tapeout & GDSII Signoff
     02:30 - 03:00 : Benchmark Signoff Matrix & Conclusion
 ```
 
 ---
 
 ### Act 1: The Hook (0:00 – 0:30)
-* **Visual:** Split screen. On the left: terminal executing `python run_pipeline.py --test-all` with high-speed token generation (450+ tok/s). On the right: a stunning 3D exploded silicon layout of `sync_fifo.gds` rotating in the WebGL Silicon3D viewer.
+* **Visual:** Split screen. On the left: terminal executing `python run_pipeline.py --test-all` with high-speed token generation (450+ tok/s). On the right: high-resolution KLayout silicon macro render of `sync_fifo.gds` showing all metallization layers and standard cell routing.
 * **Audio / Voiceover:**  
   *"Designing a microchip traditionally takes teams of engineers months of writing RTL, debugging timing violations, and resolving design rule checks. What if you could give an AI a plain-English specification—and within sixty seconds, have a verified, timing-closed, DRC-clean GDSII silicon layout ready for tapeout?*  
   *This is SiliconFlow-AI: an autonomous hardware design framework that connects LLM reasoning models with physical EDA toolchains on the open-source SkyWater 130nm process node. No simulated toys, no hallucinations—every single gate, micron of wire, and silicon layer you're looking at was physically placed and routed."*
@@ -88,7 +88,7 @@ timeline
 
 ---
 
-### Act 4: OpenLane Tapeout, GDSII Streamout & Silicon3D WebGL (1:45 – 2:30)
+### Act 4: OpenLane Tapeout & GDSII Streamout Signoff (1:45 – 2:30)
 * **Visual:** Transition to WSL2 OpenLane physical flow. Show terminal output of `scripts/run_openlane_physical_flow.py` running in Docker:  
   - Initial Floorplan (Die 90x90 µm)  
   - Power Delivery Network (PDN Met4/Met5 straps)  
@@ -97,12 +97,12 @@ timeline
   - TritonRoute Detailed Routing (2,544 µm wirelength, 700 vias)  
   - Magic DRC (0 errors) & Netgen LVS (0 errors)  
   - GDSII binary generated (`counter_sync.gds`).  
-  Then switch to browser: load `tools/gds3d-viewer/index.html` with `counter_sync.gds`, drag the Z-axis exploded slider, use the cross-section slice tool, and toggle layer visibility.
+  Then display the high-resolution KLayout silicon macro render (`outputs/counter_sync/images/counter_sync_layout.png`) showing all metallization layers.
 * **Audio / Voiceover:**  
   *"Now for the ultimate test: physical implementation.  
   We invoke the OpenLane Docker container targeting SkyWater 130nm. The engine automatically computes core utilization, builds the power distribution network, places all standard cells, runs clock tree synthesis, and routes the interconnects with TritonRoute.  
   Zero DRC violations. Zero LVS mismatches.  
-  And here is the streamed-out GDSII file opened in our native WebGL Silicon3D viewer. Because it runs directly in the browser with custom binary stream parsing, we can explode the metal stack, inspect routing congestion, and slice into the silicon core in real time."*
+  And here is the streamed-out GDSII silicon layout inspected through KLayout. Every routing channel, via stack, and standard cell placement conforms to physical design rules and is 100% tapeout-ready."*
 
 ---
 
@@ -125,8 +125,7 @@ timeline
 | **Sync FIFO Layout Render (PNG)** | `outputs/sync_fifo/images/sync_fifo_layout.png` | Act 1 Intro Visual |
 | **Counter Sync Layout Render (PNG)**| `outputs/counter_sync/images/counter_sync_layout.png` | Act 4 Walkthrough |
 | **PWM Generator Layout Render (PNG)**| `outputs/pwm_generator/images/pwm_generator_layout.png` | Act 5 Gallery |
-| **Tapeout GDSII Files** | `outputs/<design>/outputs/<design>.gds` | Physical Proof & Silicon3D Demo |
-| **Silicon3D WebGL Viewer** | `tools/gds3d-viewer/index.html` | Act 1 & Act 4 Interactive Demo |
+| **Tapeout GDSII Files** | `outputs/<design>/outputs/<design>.gds` | Physical Proof & KLayout Layouts |
 | **Empirical Metrics JSON** | `docs/benchmark_results.json` | Benchmark Graphic Data Source |
 | **Signoff Report** | `docs/INTERNAL_VALIDATION_REPORT.md` | Verification Reference |
 
@@ -147,7 +146,4 @@ python run_pipeline.py --design counter_sync --prompt "8-bit up-down counter wit
 
 # 4. OpenLane Physical Flow Demo (Fast Run ~37s)
 python scripts/run_openlane_physical_flow.py --design alu4bit
-
-# 5. Launch Silicon3D Viewer
-start tools/gds3d-viewer/index.html
 ```

@@ -47,12 +47,10 @@ build/*.tcl
 
 # Large Silicon Manufacturing Files (Avoid GitHub 100MB Limit)
 *.gds
-!tools/gds3d-viewer/samples/*.gds
 *.mag
 *.lef
 *.rpt.debug.gz
 *.rpt.error.gz
-tools/gds3d-viewer/digital_twin_audit/
 
 # System & OS Files
 .DS_Store
