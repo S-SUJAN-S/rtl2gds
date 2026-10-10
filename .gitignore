@@ -52,6 +52,7 @@ build/*.tcl
 *.lef
 *.rpt.debug.gz
 *.rpt.error.gz
+tools/gds3d-viewer/digital_twin_audit/
 
 # System & OS Files
 .DS_Store

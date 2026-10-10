@@ -277,14 +277,14 @@ async def run_audit():
                 current_loaded = demo
 
             # 1. Reset everything first for clean baseline
-            btn_reset = await page.wait_for_selector("#btn-reset-all")
+            btn_reset = await page.wait_for_selector("#btn-reset-cam")
             await btn_reset.click()
             await asyncio.sleep(0.3)
 
             # 2. Mode 2D/3D
             is_2d = shot.get("mode2d", False)
             if is_2d:
-                btn_2d = await page.wait_for_selector("#btn-toggle-2d")
+                btn_2d = await page.wait_for_selector("#btn-toggle-2d3d")
                 await btn_2d.click()
                 await asyncio.sleep(0.5)
 
@@ -296,9 +296,13 @@ async def run_audit():
             # 4. Apply Exploded View Slider
             explode_val = shot.get("explode", "1.0")
             if explode_val != "1.0":
-                slider = await page.wait_for_selector("#slider-explode")
-                await slider.fill(explode_val)
-                await slider.dispatch_event("input")
+                await page.evaluate("""(val) => {
+                    const el = document.getElementById('slider-explode');
+                    if (el) {
+                        el.value = val;
+                        el.dispatchEvent(new Event('input'));
+                    }
+                }""", explode_val)
                 await asyncio.sleep(0.4)
 
             # 5. Apply Layer Isolation Filter
@@ -310,13 +314,12 @@ async def run_audit():
                 btn = await page.wait_for_selector("#btn-metals-only")
                 await btn.click()
             elif flt == "frontend":
-                btn = await page.wait_for_selector("#btn-feol-only")
+                btn = await page.wait_for_selector("#btn-frontend-only")
                 await btn.click()
             await asyncio.sleep(0.3)
 
             # 6. Apply Cross-Section Slicing if requested
             if "slice" in shot:
-                # Toggle slicing panel
                 btn_slice = await page.wait_for_selector("#btn-toggle-slicing")
                 await btn_slice.click()
                 chk = await page.wait_for_selector("#chk-slicing-enable")
@@ -325,18 +328,20 @@ async def run_audit():
                     await chk.check()
                 
                 slice_cfg = shot["slice"]
-                if "x" in slice_cfg:
-                    sl_x = await page.wait_for_selector("#slider-slice-x")
-                    await sl_x.fill(slice_cfg["x"])
-                    await sl_x.dispatch_event("input")
-                if "y" in slice_cfg:
-                    sl_y = await page.wait_for_selector("#slider-slice-y")
-                    await sl_y.fill(slice_cfg["y"])
-                    await sl_y.dispatch_event("input")
-                if "z" in slice_cfg:
-                    sl_z = await page.wait_for_selector("#slider-slice-z")
-                    await sl_z.fill(slice_cfg["z"])
-                    await sl_z.dispatch_event("input")
+                await page.evaluate("""(cfg) => {
+                    if (cfg.x !== undefined) {
+                        const el = document.getElementById('slider-slice-x');
+                        if (el) { el.value = cfg.x; el.dispatchEvent(new Event('input')); }
+                    }
+                    if (cfg.y !== undefined) {
+                        const el = document.getElementById('slider-slice-y');
+                        if (el) { el.value = cfg.y; el.dispatchEvent(new Event('input')); }
+                    }
+                    if (cfg.z !== undefined) {
+                        const el = document.getElementById('slider-slice-z');
+                        if (el) { el.value = cfg.z; el.dispatchEvent(new Event('input')); }
+                    }
+                }""", slice_cfg)
                 await asyncio.sleep(0.5)
 
             # Settle render frame
